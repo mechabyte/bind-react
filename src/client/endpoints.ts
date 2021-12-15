@@ -1,0 +1,17 @@
+export default {
+  AUTHORIZE_BIND_PROFILE: '/bind_api/web/validate',
+  CREATE_PREFILL_REQUEST: '/bind_api/web/prefills',
+  // REATE_CUSTOM_QUOTE: '/bind_api/web/custom_quote',
+  // CREATE_PAYMENT_AUTHORIZATION: '/bind_api/web/payment_authorization',
+  // CREATE_QUOTE: '/bind_api/web/quotes',
+  // GET_MARKET_RULES: '/web_api/contexts/profile_rules_context/',
+  GET_PREFILL_REQUEST: '/bind_api/web/prefills',
+  GET_PROFILE_RULES_CONTEXT: '/web_api/contexts/profile_rules_context',
+  GET_SUPPORTED_MARKETS: '/web_api/supported_markets',
+  // GET_QUOTE: ({ ratingRequestId }: { ratingRequestId: string }) => `/bind_api/web/quotes/${ratingRequestId}`,
+  // GET_QUOTE_COVERAGES: '/bind_api/web/quote_coverages',
+  // GET_QUOTING_RULES: '/bind_api/web/quoting_rules',
+  // MARK_QUOTE_VIEWED: '/bind_api/web/quotes/mark_viewed',
+  // VALIDATE_ACCESS_TOKEN: '/bind_api/web/validate_token',
+  // VALIDATE_AUTH_PREFILL: '/bind_api/web/validate',
+};
