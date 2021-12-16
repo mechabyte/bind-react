@@ -1,6 +1,9 @@
 import { StrictMode } from "react";
 import { render } from "react-dom";
-import { EmbeddedBind, EmbeddedBindProvider } from '@embedded-bind/react';
+import EmbeddedClient from '@embedded-bind/client';
+import { EmbeddedBind, EmbeddedClientProvider } from '@embedded-bind/react';
+
+const client = new EmbeddedClient('hello', 'http://localhost:3000');
 
 export interface IHelloWorld {
   helloworld: string;
@@ -8,9 +11,9 @@ export interface IHelloWorld {
 
 render(
   <StrictMode>
-    <EmbeddedBindProvider apiKey="1337" apiUrl="https://localhost:3000">
+    <EmbeddedClientProvider client={client}>
       <EmbeddedBind />
-    </EmbeddedBindProvider>
+    </EmbeddedClientProvider>
   </StrictMode>,
   document.getElementById("root")
 );

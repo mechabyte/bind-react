@@ -1,4 +1,4 @@
-import type { Axios, AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { Axios, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
 import type {
   AuthorizeBindProfileRequestType,
   AuthorizeBindProfileResponseType,
@@ -18,6 +18,8 @@ import ENDPOINTS from '@embedded-bind/client/endpoints';
 import createAxiosClient from '@embedded-bind/client/utils/create-axios-client';
 import verifyResponseStatus from '@embedded-bind/client/utils/verify-response-status';
 
+import { getToken, setToken } from '@embedded-bind/client/token';
+
 class Client {
   apiKey: string;
 
@@ -25,31 +27,21 @@ class Client {
 
   client: Axios;
 
-  persistToken: (token: string) => void;
-
-  private userToken: string | undefined;
-
-  constructor(apiKey: string, apiUrl: string, config: { getToken: () => string | null, persistToken: (token: string) => any }) {
+  constructor(apiKey: string, apiUrl: string) {
     this.apiKey = apiKey;
     this.client = createAxiosClient({
       baseURL: apiUrl,
     });
 
-    this.persistToken = config.persistToken;
-
-    this.client.interceptors?.request.use((req) => {
-      const token = config.getToken();
-      if (token && req.headers?.authorization) {
-        req.headers.authorization = token;
-      }
-      return req;
-    })
+    this.authorized = !!getToken();
   }
 
-  async authorize(config: AxiosRequestConfig<AuthorizeBindProfileRequestType>): Promise<Omit<AuthorizeBindProfileResponseType, 'error'>> {
-    const { data } = await this.client.post<AuthorizeBindProfileRequestType, AxiosResponse<AuthorizeBindProfileResponseType>>(
-      ENDPOINTS.AUTHORIZE_BIND_PROFILE, config,
+  async authorize(inputData: AuthorizeBindProfileRequestType, config?: AxiosRequestConfig<AuthorizeBindProfileRequestType>): Promise<Omit<AuthorizeBindProfileResponseType, 'error'>> {
+    const { data } = await this.client.post<AuthorizeBindProfileResponseType, AxiosResponse<AuthorizeBindProfileResponseType>, AuthorizeBindProfileRequestType>(
+      ENDPOINTS.AUTHORIZE_BIND_PROFILE, inputData, config
     );
+
+    console.log(data);
 
     if (data.error) { throw new Error(data.error) }
 
@@ -58,76 +50,69 @@ class Client {
     return data;
   }
 
-  async createPrefillRequest(config: AxiosRequestConfig<CreatePrefillRequestRequestType>): Promise<Omit<CreatePrefillRequestResponseType, 'error'>> {
-    await this.verifyAuth();
-
-    const response = await this.client.post<CreatePrefillRequestRequestType, AxiosResponse<CreatePrefillRequestResponseType>>(
-      ENDPOINTS.CREATE_PREFILL_REQUEST, config,
-    );
-
-    const { data } = verifyResponseStatus(response, {
-      expectedResponse: 201,
-      expectedErrorResponses: [422, 500],
+  async createPrefillRequest(inputData: CreatePrefillRequestRequestType, config?: AxiosRequestConfig<CreatePrefillRequestRequestType>): Promise<Omit<CreatePrefillRequestResponseType, 'error'>> {
+    return this.verifyAuthenticatedRequest().then(async (authHeader: AxiosRequestHeaders) => {
+      const response = await this.client.post<CreatePrefillRequestResponseType, AxiosResponse<CreatePrefillRequestResponseType>, CreatePrefillRequestRequestType>(
+        ENDPOINTS.CREATE_PREFILL_REQUEST, inputData, { ...config, headers: { ...config?.headers, ...authHeader } },
+      );
+  
+      const { data } = verifyResponseStatus(response, {
+        expectedResponse: 201,
+        expectedErrorResponses: [422, 500],
+      });
+  
+      if (data.error) { throw new Error(data.error) }
+  
+      return data;
     });
-
-    if (data.error) { throw new Error(data.error) }
-
-    return data;
   }
 
-  async getPrefillRequest(config: AxiosRequestConfig<GetPrefillRequestRequestType>): Promise<GetPrefillRequestResponseType> {
-    await this.verifyAuth();
-
-    const response = await this.client.get<GetPrefillRequestRequestType, AxiosResponse<GetPrefillRequestResponseType>>(
-      ENDPOINTS.GET_PREFILL_REQUEST, config
-    );
-
-    const { data } = verifyResponseStatus(response, {
-      expectedResponse: [200, 201, 204, 400],
+  async getPrefillRequest(config?: AxiosRequestConfig<GetPrefillRequestRequestType>): Promise<GetPrefillRequestResponseType> {
+    return this.verifyAuthenticatedRequest().then(async (authHeader: AxiosRequestHeaders) => {
+      const response = await this.client.get<GetPrefillRequestResponseType, AxiosResponse<GetPrefillRequestResponseType>, GetPrefillRequestRequestType>(
+        ENDPOINTS.GET_PREFILL_REQUEST, { ...config, headers: { ...config?.headers, ...authHeader } }
+      );
+  
+      const { data } = verifyResponseStatus(response, {
+        expectedResponse: [200, 201, 204, 400],
+      });
+  
+      return data;
     });
-
-    return data;
   }
 
-  async getProfileRules(config: AxiosRequestConfig<GetProfileRulesRequestType>): Promise<Omit<GetProfileRulesResponseType, 'error'>> {
-    await this.verifyAuth();
-
-    const { data } = await this.client.get<GetProfileRulesRequestType, AxiosResponse<GetProfileRulesResponseType>>(
-      ENDPOINTS.GET_PROFILE_RULES_CONTEXT, config
-    );
-
-    if (data.error) { throw new Error(data.error) }
-
-    return data;
+  async getProfileRules(config?: AxiosRequestConfig<GetProfileRulesRequestType>): Promise<Omit<GetProfileRulesResponseType, 'error'>> {
+    return this.verifyAuthenticatedRequest().then(async (authHeader: AxiosRequestHeaders) => {
+      const { data } = await this.client.get<GetProfileRulesResponseType, AxiosResponse<GetProfileRulesResponseType>, GetProfileRulesRequestType>(
+        ENDPOINTS.GET_PROFILE_RULES_CONTEXT, { ...config, headers: { ...config?.headers, ...authHeader } }
+      );
+  
+      if (data.error) { throw new Error(data.error) }
+  
+      return data;
+    });
   }
 
-  async getSupportedMarkets(config: AxiosRequestConfig<GetSupportedMarketsRequestType>): Promise<GetSupportedMarketsResponseType> {
-    await this.verifyAuth();
-    
-    const { data } = await this.client.get<GetSupportedMarketsRequestType, AxiosResponse<GetSupportedMarketsResponseType>>(
-      ENDPOINTS.GET_SUPPORTED_MARKETS, config
-    );
-
-    return data;
-  }
-
-  clientRequestInterceptor(req: AxiosRequestConfig) {
-    if (this.userToken && req.headers?.authorization) {
-      req.headers.authorization = this.userToken;
-    }
-    return req;
+  async getSupportedMarkets(config?: AxiosRequestConfig<GetSupportedMarketsRequestType>): Promise<GetSupportedMarketsResponseType> {
+    return this.verifyAuthenticatedRequest().then(async (authHeader: AxiosRequestHeaders) => {
+      const { data } = await this.client.get<GetSupportedMarketsResponseType, AxiosResponse<GetSupportedMarketsResponseType>, GetSupportedMarketsRequestType>(
+        ENDPOINTS.GET_SUPPORTED_MARKETS, { ...config, headers: { ...config?.headers, ...authHeader } }
+      );
+  
+      return data;
+    });
   }
 
   setUserAuthorization(token: string) {
-    this.persistToken(token);
-    this.userToken = token;
+    setToken(token);
     this.authorized = true;
   }
 
-  private verifyAuth(): Promise<void> {
+  private verifyAuthenticatedRequest(): Promise<AxiosRequestHeaders> {
     return new Promise((resolve, reject) => {
-      if (this.authorized) {
-        resolve();
+      const token = getToken();
+      if (this.authorized && token) {
+        resolve({ AUTH_TOKEN: token });
       } else {
         reject(new UnauthorizedError());
       }

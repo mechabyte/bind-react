@@ -1,6 +1,6 @@
-export { default as EmbeddedBindProvider } from '@embedded-bind/react/embedded-bind-provider'
+export { default as EmbeddedClientProvider } from '@embedded-bind/react/embedded-client-provider'
 export { default as EmbeddedBind } from '@embedded-bind/react/embedded-bind';
 
 export type {
-  IEmbeddedBindProvider,
+  IEmbeddedClientProvider,
 } from '@embedded-bind/react/types';

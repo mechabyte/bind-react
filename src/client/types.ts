@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from "axios";
+
 type StatesAbbreviation = 'AL' |
 'AK' |
 'AZ' |
@@ -101,10 +103,6 @@ const StatesAbbreviations: {[key: string]: StatesAbbreviation} = {
   WEST_VIRGINIA: 'WV',
   WYOMING: 'WI',
 };
-
-interface CreateBindProfileRequestType {
-  auth: string;
-}
 
 /**
  * {
@@ -211,14 +209,14 @@ interface CreatePrefillRequestRequestType {
   lastName: string;
   dob: string;
   address1: string;
-  address2: string;
+  address2?: string;
   city: string;
-  state: string;
-  zip: string;
+  state: StatesAbbreviation;
+  zip: number;
   latitude?: number;
   longitude?: number;
   licenseNumber: string;
-  licenseState: string;
+  licenseState: StatesAbbreviation;
   barcode?: string;
   gender?: string;
   maritalStatus?: string;
@@ -262,6 +260,7 @@ interface IBindClient {
 export type {
   AuthorizeBindProfileRequestType,
   AuthorizeBindProfileResponseType,
+  BindProfileType,
   CreatePrefillRequestRequestType,
   CreatePrefillRequestResponseType,
   GetPrefillRequestRequestType,

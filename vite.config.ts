@@ -8,7 +8,9 @@ import mkcert from "vite-plugin-mkcert";
 const defineConfig: UserConfigFn = ({ command, mode }) => {
   const config: UserConfig = {
     server: {
+      cors: true,
       https: true,
+      port: 1338
     },
     plugins: [
       react(),

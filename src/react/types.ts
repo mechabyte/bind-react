@@ -1,17 +1,14 @@
 import type Client from '@embedded-bind/client';
 import type { ReactNode } from 'react';
 
-interface IEmbeddedBindProvider {
-  apiKey: string;
-  apiUrl: string;
+interface IEmbeddedClientProvider {
+  client: Client;
   children: ReactNode;
 }
 
-type EmbeddedBindContextType = {
-  client: Client;
-};
+type EmbeddedClientContextType = Client;
 
 export type {
-  EmbeddedBindContextType,
-  IEmbeddedBindProvider,
+  EmbeddedClientContextType,
+  IEmbeddedClientProvider,
 }
