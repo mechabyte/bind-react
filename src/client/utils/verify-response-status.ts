@@ -1,6 +1,6 @@
 import type { AxiosResponse } from 'axios';
-import ExpectedResponseError from '@embedded-bind/client/errors/ExpectedResponseError';
-import ResponseError from '@embedded-bind/client/errors/ResponseError';
+import ExpectedErrorResponseStatus from '@embedded-bind/client/errors/ExpectedErrorResponseStatus';
+import UnexpectedErrorResponseStatus from '@embedded-bind/client/errors/UnexpectedErrorResponseStatus';
 
 interface IVerifyResponseConfig {
   expectedResponse?: number | number[],
@@ -17,10 +17,10 @@ function verifyResponseStatus<T>(response: AxiosResponse<T>, {
   }
 
   if (expectedErrorResponses && expectedErrorResponses.includes(response.status)) {
-    throw new ExpectedResponseError({ url: response.config?.url, statusCode: response.status });
+    throw new ExpectedErrorResponseStatus({ url: response.config?.url, statusCode: response.status });
   }
 
-  throw new ResponseError();
+  throw new UnexpectedErrorResponseStatus();
 }
 
 export default verifyResponseStatus;

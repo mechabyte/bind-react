@@ -1,5 +1,3 @@
-import { AxiosRequestConfig } from "axios";
-
 type StatesAbbreviation = 'AL' |
 'AK' |
 'AZ' |
@@ -103,52 +101,6 @@ const StatesAbbreviations: {[key: string]: StatesAbbreviation} = {
   WEST_VIRGINIA: 'WV',
   WYOMING: 'WI',
 };
-
-/**
- * {
-	"bind_profile": {
-		"id": "29b49580-d326-4dc5-a09f-c212b588c7bc",
-		"cancel_url": "https://fauxclient-partner-testing.netlify.app/?cancel=true",
-		"success_url": "https://fauxclient-partner-testing.netlify.app/?success=true",
-		"email": "Brody21@hotmail.com",
-		"policy_effective_date": "2021-12-16",
-		"external_id": "c697ea43-ef9f-41da-8757-186f03d0e7b8",
-		"vehicles": [
-			{
-				"vin": "2B3KA53H57H572371",
-				"year": 2007,
-				"make": "Dodge",
-				"model": "Charger",
-				"purchase_date": null,
-				"vehicle_image_url": "https://picsum.photos/640/480"
-			}
-		],
-		"drivers": [
-			{
-				"dob": "1969-10-20",
-				"first_name": "Rey",
-				"last_name": "Schultz",
-				"gender": null,
-				"homeowner_status": null,
-				"marital_status": null,
-				"license_number": null,
-				"license_state": null,
-				"primary_named_insured": true
-			}
-		],
-		"mailing_address": {
-			"line1": "472 Padberg Spring",
-			"line2": null,
-			"city": "Louisville/Jefferson County",
-			"state": "OH",
-			"zip": "45943"
-		},
-		"phone_number": "608-905-1421",
-		"account_id": "f25a1998-0423-46ff-ac15-7ffff178e66e",
-		"user_id": "88a0b473-e807-4014-8cc8-d0856acc0d89"
-	}
-}
- */
 
 type BindProfileAddressType = {
   line1: string;
