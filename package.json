@@ -34,7 +34,9 @@
     "axios-case-converter": "^0.9.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-query": "^3.34.3"
+    "react-query": "^3.34.3",
+    "react-router": "^6.2.1",
+    "react-router-dom": "^6.2.1"
   },
   "devDependencies": {
     "@0x219/commitlint-config": "1.0.2",
