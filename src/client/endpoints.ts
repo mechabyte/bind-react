@@ -5,6 +5,7 @@ export default {
   // CREATE_PAYMENT_AUTHORIZATION: '/bind_api/web/payment_authorization',
   // CREATE_QUOTE: '/bind_api/web/quotes',
   // GET_MARKET_RULES: '/web_api/contexts/profile_rules_context/',
+  GET_BIND_PROFILE: '/bind_api/web/bind_profile',
   GET_PREFILL_REQUEST: '/bind_api/web/prefills',
   GET_PROFILE_RULES_CONTEXT: '/web_api/contexts/profile_rules_context',
   GET_SUPPORTED_MARKETS: '/web_api/supported_markets',

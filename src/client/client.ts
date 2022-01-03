@@ -96,6 +96,16 @@ class Client extends Object {
     });
   }
 
+  async profile(config?: AxiosRequestConfig<GetBindProfileRequestType>): Promise<GetBindProfileResponseType> {
+    return this.verifyAuthenticatedRequest().then(async (authHeader: AxiosRequestHeaders) => {
+      const { data } = await this.client.get<GetBindProfileResponseType, AxiosResponse<GetBindProfileResponseType>, GetBindProfileRequestType>(
+        ENDPOINTS.GET_BIND_PROFILE, { ...config, headers: { ...config?.headers, ...authHeader } }
+      );
+  
+      return data;
+    })
+  }
+
   private verifyAuthenticatedRequest(): Promise<AxiosRequestHeaders> {
     return new Promise((resolve, reject) => {
       const token = getToken();

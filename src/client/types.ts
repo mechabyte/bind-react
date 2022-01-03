@@ -187,6 +187,11 @@ interface CreatePrefillRequestResponseType {
   status?: PrefillRequestStatusType;
 };
 
+type GetBindProfileRequestType = Record<string, unknown>;
+interface GetBindProfileResponseType {
+  bindProfile?: BindProfileType;
+}
+
 type GetPrefillRequestRequestType = Record<string, unknown>;
 interface GetPrefillRequestResponseType {
   prefill?: Record<string, unknown>
@@ -215,6 +220,8 @@ export type {
   BindProfileType,
   CreatePrefillRequestRequestType,
   CreatePrefillRequestResponseType,
+  GetBindProfileRequestType,
+  GetBindProfileResponseType,
   GetPrefillRequestRequestType,
   GetPrefillRequestResponseType,
   GetProfileRulesRequestType,
@@ -224,6 +231,8 @@ export type {
   IBindClient,
   StatesAbbreviation,
 };
+
+export type { ClientError } from '@embedded-bind/client/errors';
 
 export {
   PrefillRequestStatuses,

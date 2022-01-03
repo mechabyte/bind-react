@@ -1,5 +1,9 @@
+import { useState } from "react";
+import Router from "@embedded-bind/react/embedded-bind/router";
+
 export default function() {
+  const [token, setToken] = useState<string | null>(null);
   return (
-    <h3>Howdy!</h3>
+    <Router token={token} setToken={setToken} />
   )
 };

@@ -35,7 +35,7 @@ function EmbeddedClientProvider({ client, children }: IEmbeddedClientProvider) {
       licenseState: 'FL'
     }})
     */
-   embeddedClientRef.current.authorize({ auth: 'PNIVb78axcOd_FezZCUU_A' })
+   // embeddedClientRef.current.authorize({ auth: 'PNIVb78axcOd_FezZCUU_A' })
     embeddedClientRef.current.client.get<{ id: string, name: string }[]>('https://api.github.com/users/mechabyte/repos').then(({ data }) => setRepos(data))
   }, [embeddedClientRef])
 

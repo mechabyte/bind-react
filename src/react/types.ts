@@ -1,22 +1,16 @@
 import Client from '@embedded-bind/client';
+import queryKeys from '@embedded-bind/react/embedded-bind/hooks/use-query/keys';
 import type { ClientError } from '@embedded-bind/client';
-import type { BindProfileType, CreatePrefillRequestRequestType, CreatePrefillRequestResponseType, GetPrefillRequestRequestType, GetPrefillRequestResponseType } from '@embedded-bind/client/types';
+import type { BindProfileType, CreatePrefillRequestRequestType, CreatePrefillRequestResponseType, GetBindProfileResponseType, GetPrefillRequestRequestType, GetPrefillRequestResponseType, GetProfileRulesRequestType, GetProfileRulesResponseType } from '@embedded-bind/client/types';
 import type { ReactNode } from 'react';
-import type { MutateOptions, UseMutationOptions, UseQueryOptions, QueryOptions, QueryFunctionContext, QueryMeta } from 'react-query';
+import type { MutateOptions, UseMutationOptions, UseQueryOptions, QueryObserverIdleResult } from 'react-query';
 
 /**
- * https://tkdodo.eu/blog/leveraging-the-query-function-context
-*/
-const queryKeys = {
-  // ✅ all keys are arrays with exactly one object
-  all: [{ scope: 'app' }] as const,
-  prefillRequest: () =>
-    [{ ...queryKeys.all[0], entity: 'prefillRequest' }] as const,
-  ratingRequests: () =>
-    [{ ...queryKeys.all[0], entity: 'ratingRequest' }] as const,
-  ratingRequest: (id: string) =>
-    [{ ...queryKeys.ratingRequests()[0], id }] as const,
-};
+ * Bind PROFILE
+ */
+
+type UseBindProfileQueryOptions = UseQueryOptions<undefined, ClientError, GetBindProfileResponseType, ReturnType<typeof queryKeys.bindProfile>>;
+type UseBindProfileQueryResult = QueryObserverIdleResult<GetBindProfileResponseType, ClientError>;
 
 /**
  * CREATE PREFILL REQUESTS
@@ -52,6 +46,14 @@ type GetPrefillRequestContextType = {
   completed: boolean;
 }
 
+/**
+ * QUOTE-RELATED
+ */
+
+ type UseProfileRulesQueryOptions = UseQueryOptions<Record<string, unknown>, ClientError, GetProfileRulesResponseType, ReturnType<typeof queryKeys['profileRules']>>;
+ type UseProfileRulesQueryResult = QueryObserverIdleResult<GetProfileRulesResponseType, ClientError>;
+ 
+
 
 interface IEmbeddedClientProvider {
   client: Client;
@@ -67,4 +69,11 @@ export type {
   IEmbeddedClientProvider,
   IGetPrefillRequestProvider,
   GetPrefillRequestContextType,
-}
+  UseBindProfileQueryOptions,
+  UseBindProfileQueryResult,
+  UseProfileRulesQueryOptions,
+  UseProfileRulesQueryResult,
+};
+export {
+  queryKeys,
+};
