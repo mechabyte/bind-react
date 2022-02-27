@@ -1,6 +1,3 @@
-import Client from '@embedded-bind/client/client';
+import createClient from "./utils/create-embedded-bind-client"
 
-export type { ClientError } from '@embedded-bind/client/errors';
-
-export * as ClientErrors from '@embedded-bind/client/errors';
-export default Client;
+export default createClient;

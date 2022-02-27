@@ -1,0 +1,11 @@
+schema:
+- http://localhost:3000/bind_api/web/graphql
+documents: './src/react/**/*.tsx'
+generates:
+  ./src/react/data/schema.graphql:
+      plugins:
+        - schema-ast
+  ./src/react/graphql/generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
