@@ -1,0 +1,864 @@
+"""Attributes for creating or updating a profile vehicle"""
+input AdditionalVehicleInput {
+  """Vehicle VIN"""
+  vin: String!
+}
+
+enum BillingCycle {
+  """Full Term"""
+  full_term
+
+  """Monthly"""
+  monthly
+}
+
+type CheckboxFormInput implements FormInput {
+  checked: Boolean!
+
+  """Is the input disabled"""
+  disabled: Boolean
+  label: String
+
+  """The name of the input"""
+  name: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  options: [InputOption!]!
+
+  """Is the input required"""
+  required: Boolean
+}
+
+type CompletedProfile implements Profile {
+  completed: Boolean!
+  declined: Boolean
+  drivers: [Driver!]!
+  id: ID!
+  mailingAddress: MailingAddress!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  operationFields(subject: Subject!): [FormInput!]
+  policy: Policy
+  prefilled: Boolean!
+  prefilling: Boolean!
+  quoteCheckout(billingCycle: BillingCycle!, selectedQuoteId: ID!): QuoteCheckout
+  rate: RatingRequest
+  rated: Boolean!
+  rating: Boolean
+  vehicles: [Vehicle!]!
+}
+
+type DateFormInput implements FormInput {
+  """Is the input disabled"""
+  disabled: Boolean
+  label: String
+  maxDate: ISO8601Date
+  minDate: ISO8601Date
+
+  """The name of the input"""
+  name: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  placeholder: String
+
+  """Is the input required"""
+  required: Boolean
+  selectedDate: ISO8601Date
+}
+
+type Driver implements Node {
+  firstName: String!
+  id: ID!
+  lastName: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  pni: Boolean!
+}
+
+"""Attributes for drivers"""
+input DriverInput {
+  """Driver has taken an accident prevention course"""
+  accidentPreventionCourse: Boolean
+
+  """Driver is active-duty military"""
+  activeDutyMilitary: Boolean
+
+  """Age driver obtained driver license"""
+  ageWhenLicensed: Int
+
+  """Driver's date of birth"""
+  dob: ISO8601Date
+
+  """First name of the driver"""
+  firstName: String
+
+  """Driver gender"""
+  gender: Gender
+
+  """Last name of the driver"""
+  lastName: String
+
+  """Driver license number"""
+  licenseNumber: String
+
+  """Driver license state"""
+  licenseState: Market
+
+  """Driver marital status"""
+  maritalStatus: MaritalStatus
+
+  """Driver is a member of the national guard"""
+  nationalGuardMember: Boolean
+
+  """Driver only uses vehicles occasionally"""
+  occasionalDriver: Boolean
+
+  """Is primary named insured driver"""
+  primaryNamedInsured: Boolean
+
+  """Driver has taken a refresher prevention course"""
+  refresherPreventionCourse: Boolean
+}
+
+"""Attributes for selecting profile driver vehicles"""
+input DriverSelectVehicles {
+  driverId: ID!
+  secondaryVehicleIds: [ID!]
+  vehicleIds: [ID!]!
+}
+
+"""Attributes for targeting drivers"""
+input DriverTargetInput {
+  """ID of the driver to target"""
+  driverId: ID!
+}
+
+"""Attributes for updating an additional profile vehicle"""
+input EditAdditionalVehicleInput {
+  additionalVehicleId: ID!
+  updates: AdditionalVehicleInput!
+}
+
+"""Attributes for updating a profile driver"""
+input EditDriverInput {
+  driverId: ID!
+  updates: DriverInput!
+}
+
+type EmbeddedAccount implements Node {
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  profile: Profile!
+}
+
+interface FormInput {
+  """Is the input disabled"""
+  disabled: Boolean
+
+  """The name of the input"""
+  name: String!
+
+  """Is the input required"""
+  required: Boolean
+}
+
+enum Gender {
+  """FEMALE"""
+  F
+
+  """MALE"""
+  M
+
+  """NOT_SPECIFIED"""
+  X
+}
+
+enum HomeownerStatus {
+  """Own"""
+  OWN
+
+  """Rent"""
+  RENT
+}
+
+"""An ISO 8601-encoded date"""
+scalar ISO8601Date
+
+type IncompleteProfile implements Node & Profile {
+  completed: Boolean!
+  drivers: [Driver!]!
+  id: ID!
+  mailingAddress: MailingAddress!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  requiredFields(excludeSubmitted: Boolean = false): [FormInput!]
+  vehicles: [Vehicle!]!
+}
+
+type InputOption {
+  label: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  value: String!
+}
+
+type MailingAddress implements Node {
+  city: String!
+  id: ID!
+  line1: String!
+  line2: String
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  state: Market
+  zip: Int
+}
+
+"""Attributes for a mailing address"""
+input MailingAddressInput {
+  """Address city"""
+  city: String
+
+  """Address line one"""
+  line1: String
+
+  """Address line two"""
+  line2: String
+
+  """Address state"""
+  state: Market
+
+  """Address zip"""
+  zip: String
+}
+
+enum MaritalStatus {
+  """Married"""
+  Married
+
+  """Single"""
+  Single
+
+  """Widowed"""
+  Widowed
+}
+
+enum Market {
+  """Alaska"""
+  AK
+
+  """Alabama"""
+  AL
+
+  """Arkansas"""
+  AR
+
+  """Arizona"""
+  AZ
+
+  """California"""
+  CA
+
+  """Colorado"""
+  CO
+
+  """Connecticut"""
+  CT
+
+  """District Of Columbia"""
+  DC
+
+  """Delaware"""
+  DE
+
+  """Florida"""
+  FL
+
+  """Georgia"""
+  GA
+
+  """Hawaii"""
+  HI
+
+  """Iowa"""
+  IA
+
+  """Idaho"""
+  ID
+
+  """Illinois"""
+  IL
+
+  """Indiana"""
+  IN
+
+  """Kansas"""
+  KS
+
+  """Kentucky"""
+  KY
+
+  """Louisiana"""
+  LA
+
+  """Massachusetts"""
+  MA
+
+  """Maryland"""
+  MD
+
+  """Maine"""
+  ME
+
+  """Michigan"""
+  MI
+
+  """Minnesota"""
+  MN
+
+  """Missouri"""
+  MO
+
+  """Mississippi"""
+  MS
+
+  """Montana"""
+  MT
+
+  """North Carolina"""
+  NC
+
+  """North Dakota"""
+  ND
+
+  """Nebraska"""
+  NE
+
+  """New Hampshire"""
+  NH
+
+  """New Jersey"""
+  NJ
+
+  """New Mexico"""
+  NM
+
+  """Nevada"""
+  NV
+
+  """New York"""
+  NY
+
+  """Ohio"""
+  OH
+
+  """Oklahoma"""
+  OK
+
+  """Oregon"""
+  OR
+
+  """Pennsylvania"""
+  PA
+
+  """Rhode Island"""
+  RI
+
+  """South Carolina"""
+  SC
+
+  """South Dakota"""
+  SD
+
+  """Tennessee"""
+  TN
+
+  """Texas"""
+  TX
+
+  """Utah"""
+  UT
+
+  """Virginia"""
+  VA
+
+  """Vermont"""
+  VT
+
+  """Washington"""
+  WA
+
+  """Wisconsin"""
+  WI
+
+  """West Virginia"""
+  WV
+
+  """Wyoming"""
+  WY
+}
+
+type Mutation {
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  performProfileOperations(
+    """Parameters for PerformProfileOperations"""
+    input: PerformProfileOperationsInput!
+  ): PerformProfileOperationsPayload
+}
+
+"""An object with an ID."""
+interface Node {
+  """ID of the object."""
+  id: ID!
+}
+
+type NumberFormInput implements FormInput {
+  description: String
+
+  """Is the input disabled"""
+  disabled: Boolean
+  label: String
+  maxValue: Int
+  minValue: Int
+
+  """The name of the input"""
+  name: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  placeholder: String
+
+  """Is the input required"""
+  required: Boolean
+  value: Int
+}
+
+"""Autogenerated input type of PerformProfileOperations"""
+input PerformProfileOperationsInput {
+  attemptPrefill: Boolean!
+
+  """A unique identifier for the client performing the mutation."""
+  clientMutationId: String
+  externalUserId: String!
+  operations: [ProfileOperation!]!
+}
+
+"""Autogenerated return type of PerformProfileOperations"""
+type PerformProfileOperationsPayload {
+  """A unique identifier for the client performing the mutation."""
+  clientMutationId: String
+  embeddedAccount: EmbeddedAccount
+  errors: [String!]
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  success: Boolean!
+}
+
+type Policy implements Node {
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+}
+
+interface Profile {
+  completed: Boolean!
+  drivers: [Driver!]!
+  mailingAddress: MailingAddress!
+  vehicles: [Vehicle!]!
+}
+
+"""Attributes for a profile"""
+input ProfileInput {
+  """Email address"""
+  email: String
+
+  """Homeowner status"""
+  homeownerStatus: HomeownerStatus
+
+  """Phone number"""
+  phoneNumber: String
+
+  """Primary named innsured driver"""
+  primaryNamedInsuredId: ID
+
+  """Rideshare"""
+  rideshare: Boolean
+}
+
+input ProfileOperation {
+  addAdditionalVehicle: AdditionalVehicleInput
+  addDriver: DriverInput
+  addVehicle: VehicleInput
+  editAdditionalVehicle: EditAdditionalVehicleInput
+  editDriver: EditDriverInput
+  removeAdditionalVehicle: VehicleTargetInput
+  removeDriver: DriverTargetInput
+  selectDriverVehicles: DriverSelectVehicles
+  selectVehicleDrivers: VehicleSelectDrivers
+  updateMailingAddress: MailingAddressInput
+  updateProfile: ProfileInput
+}
+
+type Query {
+  embeddedAccount(externalId: ID!): EmbeddedAccount
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  viewer: EmbeddedAccount
+}
+
+type Quote implements Node {
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  tier: QuoteTier!
+}
+
+type QuoteCheckout implements Node {
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  price: Int!
+}
+
+enum QuoteTier {
+  """Custom coverage"""
+  custom
+
+  """High coverage"""
+  high
+
+  """Low coverage"""
+  low
+
+  """Matched coverage"""
+  rate_call_1_match
+
+  """Recommended tier"""
+  recommended
+
+  """Right quote coverage"""
+  right_quote
+
+  """State minimum coverage"""
+  state_minimum
+}
+
+type Rate implements Node {
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  quotes(tiers: [QuoteTier!]!): [Quote!]!
+}
+
+type RatingRequest implements Node {
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  rate: Rate
+  underwritingDecision: UnderwritingDecision!
+}
+
+type SelectFormInput implements FormInput {
+  """Is the input disabled"""
+  disabled: Boolean
+  label: String
+
+  """The name of the input"""
+  name: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  options: [InputOption!]!
+  placeholder: String
+
+  """Is the input required"""
+  required: Boolean
+  selectedOption: String
+}
+
+enum Subject {
+  """Perform an action against an additional vehicle"""
+  ADDITIONAL_VEHICLE
+
+  """Perform an action against an additional driver"""
+  DRIVER
+
+  """Perform an action against a profile"""
+  PROFILE
+
+  """Perform an action against a quote tier"""
+  QUOTE
+}
+
+type TextFormInput implements FormInput {
+  description: String
+
+  """Is the input disabled"""
+  disabled: Boolean
+  label: String
+
+  """The name of the input"""
+  name: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  placeholder: String
+
+  """Is the input required"""
+  required: Boolean
+  value: String
+}
+
+type UnderwritingDecision implements Node {
+  decided: Boolean!
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  underwritingStatus: String!
+}
+
+type Vehicle implements Node {
+  id: ID!
+  make: String!
+  model: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  shortVin: String
+  vin: String!
+  year: Int!
+}
+
+"""Attributes for creating or updating a profile vehicle"""
+input VehicleInput {
+  """Vehicle make"""
+  make: String
+
+  """Vehicle model"""
+  model: String
+
+  """Vehicle VIN"""
+  vin: String
+
+  """Vehicle creation year"""
+  year: Int
+}
+
+"""Attributes for selecting profile vehicle drivers"""
+input VehicleSelectDrivers {
+  driverIds: [ID!]!
+  secondaryDriverIds: [ID!]
+  vehicleId: ID!
+}
+
+"""Attributes for targeting vehicles"""
+input VehicleTargetInput {
+  """ID of the vehicle to target"""
+  vehicleId: ID!
+}
