@@ -33,7 +33,6 @@ type CheckboxFormInput implements FormInput {
     """IDs of the objects."""
     ids: [ID!]!
   ): [Node]!
-  options: [InputOption!]!
 
   """Is the input required"""
   required: Boolean
@@ -88,6 +87,9 @@ input CompleteProfileInputObject {
 
   """Phone number of the user"""
   phoneNumber: String
+
+  """Vehicle has anti-theft equipment"""
+  vehicleAntiTheftEquipment: Boolean
 
   """Vehicle make"""
   vehicleMake: String
@@ -357,9 +359,9 @@ type InputOption {
 }
 
 type MailingAddress implements Node {
-  city: String!
+  city: String
   id: ID!
-  line1: String!
+  line1: String
   line2: String
 
   """Fetches an object given its ID."""
@@ -899,8 +901,8 @@ type UnderwritingDecision implements Node {
 
 type Vehicle implements Node {
   id: ID!
-  make: String!
-  model: String!
+  make: String
+  model: String
 
   """Fetches an object given its ID."""
   node(
@@ -914,8 +916,8 @@ type Vehicle implements Node {
     ids: [ID!]!
   ): [Node]!
   shortVin: String
-  vin: String!
-  year: Int!
+  vin: String
+  year: Int
 }
 
 """Attributes for creating or updating a profile vehicle"""

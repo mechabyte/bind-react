@@ -39,7 +39,6 @@ export type CheckboxFormInput = FormInput & {
   node?: Maybe<Node>;
   /** Fetches a list of objects given a list of IDs. */
   nodes: Array<Maybe<Node>>;
-  options: Array<InputOption>;
   /** Is the input required */
   required?: Maybe<Scalars['Boolean']>;
 };
@@ -91,6 +90,8 @@ export type CompleteProfileInputObject = {
   maritalStatus?: InputMaybe<MaritalStatus>;
   /** Phone number of the user */
   phoneNumber?: InputMaybe<Scalars['String']>;
+  /** Vehicle has anti-theft equipment */
+  vehicleAntiTheftEquipment?: InputMaybe<Scalars['Boolean']>;
   /** Vehicle make */
   vehicleMake?: InputMaybe<Scalars['String']>;
   /** Vehicle model */
@@ -374,9 +375,9 @@ export type InputOptionNodesArgs = {
 
 export type MailingAddress = Node & {
   __typename?: 'MailingAddress';
-  city: Scalars['String'];
+  city?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  line1: Scalars['String'];
+  line1?: Maybe<Scalars['String']>;
   line2?: Maybe<Scalars['String']>;
   /** Fetches an object given its ID. */
   node?: Maybe<Node>;
@@ -895,15 +896,15 @@ export type UnderwritingDecisionNodesArgs = {
 export type Vehicle = Node & {
   __typename?: 'Vehicle';
   id: Scalars['ID'];
-  make: Scalars['String'];
-  model: Scalars['String'];
+  make?: Maybe<Scalars['String']>;
+  model?: Maybe<Scalars['String']>;
   /** Fetches an object given its ID. */
   node?: Maybe<Node>;
   /** Fetches a list of objects given a list of IDs. */
   nodes: Array<Maybe<Node>>;
   shortVin?: Maybe<Scalars['String']>;
-  vin: Scalars['String'];
-  year: Scalars['Int'];
+  vin?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['Int']>;
 };
 
 
@@ -958,4 +959,4 @@ export type EmbeddedAppQueryVariables = Exact<{
 }>;
 
 
-export type EmbeddedAppQuery = { __typename?: 'Query', embeddedAccount?: { __typename?: 'EmbeddedAccount', id: string, profile: { __typename: 'CompletedProfile', prefilled: boolean, prefilling: boolean, rated: boolean, rating?: boolean | null, completed: boolean, id: string, drivers: Array<{ __typename?: 'Driver', id: string, firstName: string, lastName: string }>, mailingAddress: { __typename?: 'MailingAddress', city: string, state?: Market | null, zip?: number | null }, vehicles: Array<{ __typename?: 'Vehicle', id: string, make: string, model: string, year: number }> } | { __typename: 'IncompleteProfile', completed: boolean, drivers: Array<{ __typename?: 'Driver', id: string, firstName: string, lastName: string }>, mailingAddress: { __typename?: 'MailingAddress', city: string, state?: Market | null, zip?: number | null }, vehicles: Array<{ __typename?: 'Vehicle', id: string, make: string, model: string, year: number }>, requiredFields?: Array<{ __typename: 'CheckboxFormInput', checked: boolean, disabled?: boolean | null, label?: string | null, required?: boolean | null, name: string } | { __typename: 'DateFormInput', disabled?: boolean | null, label?: string | null, maxDate?: any | null, minDate?: any | null, placeholder?: string | null, required?: boolean | null, selectedDate?: any | null, name: string } | { __typename: 'NumberFormInput', description?: string | null, disabled?: boolean | null, label?: string | null, maxValue?: number | null, minValue?: number | null, placeholder?: string | null, required?: boolean | null, name: string, numericValue?: number | null } | { __typename: 'SelectFormInput', disabled?: boolean | null, label?: string | null, required?: boolean | null, selectedOption?: string | null, name: string, options: Array<{ __typename?: 'InputOption', label: string, value: string }> } | { __typename: 'TextFormInput', description?: string | null, disabled?: boolean | null, label?: string | null, placeholder?: string | null, required?: boolean | null, value?: string | null, name: string }> | null } } | null };
+export type EmbeddedAppQuery = { __typename?: 'Query', embeddedAccount?: { __typename?: 'EmbeddedAccount', id: string, profile: { __typename: 'CompletedProfile', prefilled: boolean, prefilling: boolean, rated: boolean, rating?: boolean | null, completed: boolean, id: string, drivers: Array<{ __typename?: 'Driver', id: string, firstName: string, lastName: string }>, mailingAddress: { __typename?: 'MailingAddress', city?: string | null, state?: Market | null, zip?: number | null }, vehicles: Array<{ __typename?: 'Vehicle', id: string, make?: string | null, model?: string | null, year?: number | null }> } | { __typename: 'IncompleteProfile', completed: boolean, drivers: Array<{ __typename?: 'Driver', id: string, firstName: string, lastName: string }>, mailingAddress: { __typename?: 'MailingAddress', city?: string | null, state?: Market | null, zip?: number | null }, vehicles: Array<{ __typename?: 'Vehicle', id: string, make?: string | null, model?: string | null, year?: number | null }>, requiredFields?: Array<{ __typename: 'CheckboxFormInput', checked: boolean, disabled?: boolean | null, label?: string | null, required?: boolean | null, name: string } | { __typename: 'DateFormInput', disabled?: boolean | null, label?: string | null, maxDate?: any | null, minDate?: any | null, placeholder?: string | null, required?: boolean | null, selectedDate?: any | null, name: string } | { __typename: 'NumberFormInput', description?: string | null, disabled?: boolean | null, label?: string | null, maxValue?: number | null, minValue?: number | null, placeholder?: string | null, required?: boolean | null, name: string, numericValue?: number | null } | { __typename: 'SelectFormInput', disabled?: boolean | null, label?: string | null, required?: boolean | null, selectedOption?: string | null, name: string, options: Array<{ __typename?: 'InputOption', label: string, value: string }> } | { __typename: 'TextFormInput', description?: string | null, disabled?: boolean | null, label?: string | null, placeholder?: string | null, required?: boolean | null, value?: string | null, name: string }> | null } } | null };

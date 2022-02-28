@@ -1,3 +1,4 @@
+export { default as Checkbox } from '@embedded-bind/react/components/inputs/checkbox';
 export { default as DateInput } from '@embedded-bind/react/components/inputs/date-input';
 export { default as NumberInput } from '@embedded-bind/react/components/inputs/number-input';
 export { default as Select } from '@embedded-bind/react/components/inputs/select';

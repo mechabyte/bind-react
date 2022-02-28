@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import { DatePicker } from '@mantine/dates';
-import {NumberInput, Select, TextInput, Button} from '@mantine/core';
+import {Checkbox, NumberInput, Select, TextInput, Button} from '@mantine/core';
 import { useForm } from '@mantine/hooks';
 import { useCallback, useMemo } from 'react';
 import COMPLETE_PROFILE_MUTATION from '@embedded-bind/react/operations/mutations/complete-profile';
 import { useMutation } from '@apollo/client';
-import { IncompleteProfileRequiredFieldsFragment, TextFormInput, SelectFormInput, NumberFormInput, DateFormInput, CompleteProfileMutation, CompleteProfileMutationVariables, CompleteProfileInputObject } from '../../graphql/generated';
+import { IncompleteProfileRequiredFieldsFragment, CheckboxFormInput, TextFormInput, SelectFormInput, NumberFormInput, DateFormInput, CompleteProfileMutation, CompleteProfileMutationVariables, CompleteProfileInputObject } from '../../graphql/generated';
 
 interface IncompleteProfileFormProps {
   externalUserId: string;
@@ -14,6 +14,8 @@ interface IncompleteProfileFormProps {
 
 const fieldValueUtil = ({ __typename, ...restField }: { __typename: string }) => {
   switch(__typename) {
+    case "CheckboxInput":
+      return (restField as CheckboxFormInput).checked;
     case "DateFormInput":
       return (restField as DateFormInput).selectedDate;
     case "NumberFormInput":
@@ -48,9 +50,17 @@ function IncompleteProfileForm({ externalUserId, incompleteProfile }: Incomplete
     console.log(`Submitting:`, values);
     completeProfile({ variables: {
       externalUserId,
-      input: values
+      input: {
+        ...values,
+        dateOfBirth: values.dateOfBirth.toString(),
+      }
     }})
   }, [form, completeProfile, externalUserId]);
+
+  const handleDateChange = useCallback((fieldName) => (updatedDate: Date) => {
+    console.log(fieldName, updatedDate)
+    form.setFieldValue((fieldName as keyof CompleteProfileInputObject), updatedDate.toISOString().split('T')[0])
+  }, [form]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -64,6 +74,18 @@ function IncompleteProfileForm({ externalUserId, incompleteProfile }: Incomplete
             return (
                 <li key={requiredField.name}>
                   {
+                    isCheckBox &&
+                    <Checkbox
+                      checked={requiredField.checked}
+                      disabled={requiredField.disabled || false}
+                      name={requiredField.name}
+                      required={requiredField.required || false}
+                      label={requiredField.label}
+                      // eslint-disable-next-line react/jsx-props-no-spreading
+                      {...inputProps}
+                    />
+                  }
+                  {
                     requiredField.__typename === "DateFormInput" &&
                     <DatePicker
                       disabled={requiredField.disabled || false}
@@ -73,7 +95,7 @@ function IncompleteProfileForm({ externalUserId, incompleteProfile }: Incomplete
                       required={requiredField.required || false}
                       label={requiredField.label}
                       // eslint-disable-next-line react/jsx-props-no-spreading
-                      {...inputProps}
+                      onChange={handleDateChange(requiredField.name)}
                       value={new Date(inputProps.value)}
                     />
                   }
