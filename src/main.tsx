@@ -1,8 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-import { StrictMode } from "react";
+import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
+import { TextInput as BaseTextInput } from "@mantine/core"
 import createClient from '@embedded-bind/client';
-import { EmbeddedApp, EmbeddedClientProvider, DateInput, NumberInput, Select, TextInput } from '@embedded-bind/react';
+import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
 
 const client = createClient({
@@ -17,87 +18,54 @@ export interface IHelloWorld {
   helloworld: string;
 }
 
+function TextInputWrapper({ children }: { children: (value: string) => JSX.Element }) {
+  const [value, setValue] = useState('cedd77bc-fbe4-4484-a46b-8c7c5bd3dffb');
+  const handleChange = useCallback((event) => setValue(event.target.value), [setValue])
+  return (
+    <>
+      <BaseTextInput label="Query embedded API for a specified user" value={value} onChange={handleChange} />
+      {children(value)}
+    </>
+  )
+}
+
 render(
   <StrictMode>
     <EmbeddedClientProvider client={client}>
-      <EmbeddedApp externalId="cedd77bc-fbe4-4484-a46b-8c7c5bd3dffb">
-        {({ data, loading, error }) => {
-          if (error) {
-            return (
-              <h2>{error.message}</h2>
-            )
-          }
-          if (loading) {
-            return (
-              <h2>Loading...</h2>
-            )
-          }
-          if (data?.embeddedAccount?.profile?.__typename === 'IncompleteProfile') {
-            return (
-              <ul>
-                {
-                   data.embeddedAccount.profile.requiredFields?.map((requiredField) => {
-                    console.log(requiredField?.__typename === "SelectFormInput" && requiredField.options)
-
-                     return (
-                        <li key={requiredField.name}>
-                          {
-                            requiredField.__typename === "DateFormInput" &&
-                            <DateInput
-                              disabled={requiredField.disabled}
-                              maxDate={requiredField.maxDate}
-                              minDate={requiredField.minDate}
-                              name={requiredField.name}
-                              required={requiredField.required}
-                              label={requiredField.label}
-                              selectedDate={requiredField.selectedDate}
-                            />
-                          }
-                          {
-                            requiredField.__typename === "NumberFormInput" &&
-                            <NumberInput
-                              disabled={requiredField.disabled || false}
-                              max={requiredField.maxValue || undefined}
-                              min={requiredField.minValue || undefined}
-                              name={requiredField.name}
-                              required={requiredField.required || false}
-                              label={requiredField.label || undefined}
-                              value={requiredField.numericValue || undefined}
-                            />
-                          }
-                          {
-                            requiredField.__typename === "SelectFormInput" &&
-                            <Select
-                              data={requiredField.options || []}
-                              disabled={requiredField.disabled || false}
-                              name={requiredField.name}
-                              required={requiredField.required || false}
-                              label={requiredField.label || undefined}
-                              selectedOption={requiredField.selectedOption}
-                            />
-                          }
-                          {
-                            requiredField.__typename === "TextFormInput" &&
-                            <TextInput
-                              description={requiredField.description}
-                              disabled={requiredField.disabled || false}
-                              name={requiredField.name}
-                              required={requiredField.required || false}
-                              label={requiredField.label || undefined}
-                              value={requiredField.value || undefined}
-                            />
-                          }
-                        </li>
-                     )
-                    }
+      <TextInputWrapper>
+        {(externalId: string) => (
+            <EmbeddedApp externalId={externalId}>
+              {({ data, loading, error }) => {
+                if (error) {
+                  return (
+                    <h2>{error.message}</h2>
                   )
                 }
-              </ul>
-            )
-          }
-          return <p>Something went wrong</p>
-        }}
-      </EmbeddedApp>
+                if (loading) {
+                  return (
+                    <h2>Loading...</h2>
+                  )
+                }
+                if (data?.embeddedAccount?.profile?.__typename === 'IncompleteProfile') {
+                  return (
+                    <IncompleteProfileForm externalUserId={externalId} incompleteProfile={data.embeddedAccount.profile} />
+                  )
+                }
+                if (data?.embeddedAccount?.profile?.__typename === 'CompletedProfile') {
+                  return (
+                    <>
+                      <h1>Completed profile!</h1>
+                      <p>
+                        {JSON.stringify(data.embeddedAccount.profile)}
+                      </p>
+                    </>
+                  )
+                }
+                return <p>Something went wrong</p>
+              }}
+            </EmbeddedApp>
+          )}
+      </TextInputWrapper>
     </EmbeddedClientProvider>
   </StrictMode>,
   document.getElementById("root")

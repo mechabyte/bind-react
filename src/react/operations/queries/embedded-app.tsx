@@ -1,91 +1,48 @@
 import { gql } from "@apollo/client";
+import COMPLETED_PROFILE_SUMMARY_FRAGMENT from '../fragments/completed-profile-summary';
+import INCOMPLETE_PROFILE_REQUIRED_FIELDS_FRAGMENT from '../fragments/incomplete-profile-required-fields';
 
-export default gql`
-  query EmbeddedApp($externalId:ID!) {
-    embeddedAccount(externalId:$externalId){
-      id
-      profile {
-        __typename
-        completed
+const EMBEDDED_APP_QUERY = gql`
+query EmbeddedApp($externalId:ID!) {
+  embeddedAccount(externalId:$externalId){
+    id
+    profile {
+      __typename
+      completed
 
-        drivers {
-          id
-          firstName
-          lastName
-        }
-        mailingAddress {
-          city
-          state
-          zip
-        }
-        vehicles {
-          id
-          make
-          model
-          year
-        }
-        
-        ... on IncompleteProfile {
-          requiredFields(excludeSubmitted: true) {
-            __typename
-            name
-            
-            ... on CheckboxFormInput {
-              checked
-              disabled
-              label
-              required
-            }
-            
-            ... on DateFormInput {
-              disabled
-              label
-              maxDate
-              minDate
-              placeholder
-              required
-              selectedDate
-            }
-            
-            ... on NumberFormInput {
-              description
-              disabled
-              label
-              maxValue
-              minValue
-              placeholder
-              required
-              numericValue: value
-            }
-            
-            ... on SelectFormInput {
-              disabled
-              label
-              options {
-                label
-                value
-              }
-              required
-              selectedOption
-            }
-            ... on TextFormInput {
-              description
-              disabled
-              label
-              placeholder
-              required
-              value
-            }
-          }
-        }
-        
-        ... on CompletedProfile {
-          prefilled
-          prefilling
-          rated
-          rating
-        }
+      drivers {
+        id
+        firstName
+        lastName
+      }
+      mailingAddress {
+        city
+        state
+        zip
+      }
+      vehicles {
+        id
+        make
+        model
+        year
+      }
+      
+      ... on IncompleteProfile {
+        ...IncompleteProfileRequiredFields
+      }
+      
+      ... on CompletedProfile {
+        ...CompletedProfileSummary
+        prefilled
+        prefilling
+        rated
+        rating
       }
     }
   }
-`
+}
+${COMPLETED_PROFILE_SUMMARY_FRAGMENT}
+${INCOMPLETE_PROFILE_REQUIRED_FIELDS_FRAGMENT}
+`;
+
+export default EMBEDDED_APP_QUERY;
