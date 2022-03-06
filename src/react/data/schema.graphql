@@ -130,6 +130,7 @@ type CompletedProfile implements Profile {
   completed: Boolean!
   declined: Boolean
   drivers: [Driver!]!
+  form(operation: ProfileFormOperation!): Form
   id: ID!
   mailingAddress: MailingAddress!
 
@@ -144,7 +145,6 @@ type CompletedProfile implements Profile {
     """IDs of the objects."""
     ids: [ID!]!
   ): [Node]!
-  operationFields(subject: Subject!): [FormInput!]
   policy: Policy
   prefilled: Boolean!
   prefilling: Boolean!
@@ -185,6 +185,7 @@ type DateFormInput implements FormInput {
 
 type Driver implements Node {
   firstName: String!
+  form(operation: DriverFormOperation!): Form
   id: ID!
   lastName: String!
 
@@ -202,49 +203,35 @@ type Driver implements Node {
   pni: Boolean!
 }
 
+enum DriverFormOperation {
+  EDIT_DRIVER
+}
+
 """Attributes for drivers"""
 input DriverInput {
-  """Driver has taken an accident prevention course"""
+  """Driver accident_prevention_course"""
   accidentPreventionCourse: Boolean
 
-  """Driver is active-duty military"""
-  activeDutyMilitary: Boolean
+  """Driver date_of_birth"""
+  dateOfBirth: ISO8601Date
 
-  """Age driver obtained driver license"""
-  ageWhenLicensed: Int
-
-  """Driver's date of birth"""
-  dob: ISO8601Date
-
-  """First name of the driver"""
+  """Driver first_name"""
   firstName: String
 
   """Driver gender"""
   gender: Gender
 
-  """Last name of the driver"""
+  """Driver last_name"""
   lastName: String
 
-  """Driver license number"""
+  """Driver license_number"""
   licenseNumber: String
 
-  """Driver license state"""
+  """Driver license_state"""
   licenseState: Market
 
-  """Driver marital status"""
+  """Driver marital_status"""
   maritalStatus: MaritalStatus
-
-  """Driver is a member of the national guard"""
-  nationalGuardMember: Boolean
-
-  """Driver only uses vehicles occasionally"""
-  occasionalDriver: Boolean
-
-  """Is primary named insured driver"""
-  primaryNamedInsured: Boolean
-
-  """Driver has taken a refresher prevention course"""
-  refresherPreventionCourse: Boolean
 }
 
 """Attributes for selecting profile driver vehicles"""
@@ -287,6 +274,29 @@ type EmbeddedAccount implements Node {
     ids: [ID!]!
   ): [Node]!
   profile: Profile!
+}
+
+type Form {
+  """Required fields to complete the operation"""
+  inputs: [FormInput!]!
+
+  """Connected mutation for the form"""
+  mutation: Mutation
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+
+  """Suggested title of the form"""
+  title: String
 }
 
 interface FormInput {
@@ -671,22 +681,25 @@ interface Profile {
   vehicles: [Vehicle!]!
 }
 
+enum ProfileFormOperation {
+  ADD_DRIVER
+  ADD_VEHICLE
+  UPDATE_PROFILE
+}
+
 """Attributes for a profile"""
 input ProfileInput {
-  """Email address"""
+  """Profile email"""
   email: String
 
-  """Homeowner status"""
+  """Profile homeowner_status"""
   homeownerStatus: HomeownerStatus
 
-  """Phone number"""
+  """Profile phone_number"""
   phoneNumber: String
 
-  """Primary named innsured driver"""
-  primaryNamedInsuredId: ID
-
-  """Rideshare"""
-  rideshare: Boolean
+  """Profile rideshare"""
+  rideshare: String
 }
 
 input ProfileOperation {
@@ -839,20 +852,6 @@ type SelectFormInput implements FormInput {
   selectedOption: String
 }
 
-enum Subject {
-  """Perform an action against an additional vehicle"""
-  ADDITIONAL_VEHICLE
-
-  """Perform an action against an additional driver"""
-  DRIVER
-
-  """Perform an action against a profile"""
-  PROFILE
-
-  """Perform an action against a quote tier"""
-  QUOTE
-}
-
 type TextFormInput implements FormInput {
   description: String
 
@@ -900,6 +899,7 @@ type UnderwritingDecision implements Node {
 }
 
 type Vehicle implements Node {
+  form(operation: VehicleFormOperation!): Form
   id: ID!
   make: String
   model: String
@@ -920,19 +920,61 @@ type Vehicle implements Node {
   year: Int
 }
 
+enum VehicleFormOperation {
+  EDIT_VEHICLE
+}
+
 """Attributes for creating or updating a profile vehicle"""
 input VehicleInput {
+  """Vehicle annualized_mileage"""
+  annualizedMileage: Int
+
+  """Vehicle anti_theft_equipment"""
+  antiTheftEquipment: Boolean
+
   """Vehicle make"""
   make: String
 
   """Vehicle model"""
   model: String
 
-  """Vehicle VIN"""
+  """Vehicle primary_usage"""
+  primaryUsage: VehiclePrimaryUsage
+
+  """Vehicle purchase_date"""
+  purchaseDate: ISO8601Date
+
+  """Vehicle vin"""
   vin: String
 
-  """Vehicle creation year"""
+  """Vehicle vin_etching"""
+  vinEtching: Boolean
+
+  """Vehicle year"""
   year: Int
+}
+
+enum VehiclePrimaryUsage {
+  """business"""
+  business
+
+  """commute"""
+  commute
+
+  """farm"""
+  farm
+
+  """occasional"""
+  occasional
+
+  """pleasure"""
+  pleasure
+
+  """rideshare"""
+  rideshare
+
+  """work"""
+  work
 }
 
 """Attributes for selecting profile vehicle drivers"""

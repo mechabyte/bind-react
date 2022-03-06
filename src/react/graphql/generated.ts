@@ -134,13 +134,13 @@ export type CompletedProfile = Profile & {
   completed: Scalars['Boolean'];
   declined?: Maybe<Scalars['Boolean']>;
   drivers: Array<Driver>;
+  form?: Maybe<Form>;
   id: Scalars['ID'];
   mailingAddress: MailingAddress;
   /** Fetches an object given its ID. */
   node?: Maybe<Node>;
   /** Fetches a list of objects given a list of IDs. */
   nodes: Array<Maybe<Node>>;
-  operationFields?: Maybe<Array<FormInput>>;
   policy?: Maybe<Policy>;
   prefilled: Scalars['Boolean'];
   prefilling: Scalars['Boolean'];
@@ -152,6 +152,11 @@ export type CompletedProfile = Profile & {
 };
 
 
+export type CompletedProfileFormArgs = {
+  operation: ProfileFormOperation;
+};
+
+
 export type CompletedProfileNodeArgs = {
   id: Scalars['ID'];
 };
@@ -159,11 +164,6 @@ export type CompletedProfileNodeArgs = {
 
 export type CompletedProfileNodesArgs = {
   ids: Array<Scalars['ID']>;
-};
-
-
-export type CompletedProfileOperationFieldsArgs = {
-  subject: Subject;
 };
 
 
@@ -204,6 +204,7 @@ export type DateFormInputNodesArgs = {
 export type Driver = Node & {
   __typename?: 'Driver';
   firstName: Scalars['String'];
+  form?: Maybe<Form>;
   id: Scalars['ID'];
   lastName: Scalars['String'];
   /** Fetches an object given its ID. */
@@ -211,6 +212,11 @@ export type Driver = Node & {
   /** Fetches a list of objects given a list of IDs. */
   nodes: Array<Maybe<Node>>;
   pni: Scalars['Boolean'];
+};
+
+
+export type DriverFormArgs = {
+  operation: DriverFormOperation;
 };
 
 
@@ -223,36 +229,28 @@ export type DriverNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
+export enum DriverFormOperation {
+  EditDriver = 'EDIT_DRIVER'
+}
+
 /** Attributes for drivers */
 export type DriverInput = {
-  /** Driver has taken an accident prevention course */
+  /** Driver accident_prevention_course */
   accidentPreventionCourse?: InputMaybe<Scalars['Boolean']>;
-  /** Driver is active-duty military */
-  activeDutyMilitary?: InputMaybe<Scalars['Boolean']>;
-  /** Age driver obtained driver license */
-  ageWhenLicensed?: InputMaybe<Scalars['Int']>;
-  /** Driver's date of birth */
-  dob?: InputMaybe<Scalars['ISO8601Date']>;
-  /** First name of the driver */
+  /** Driver date_of_birth */
+  dateOfBirth?: InputMaybe<Scalars['ISO8601Date']>;
+  /** Driver first_name */
   firstName?: InputMaybe<Scalars['String']>;
   /** Driver gender */
   gender?: InputMaybe<Gender>;
-  /** Last name of the driver */
+  /** Driver last_name */
   lastName?: InputMaybe<Scalars['String']>;
-  /** Driver license number */
+  /** Driver license_number */
   licenseNumber?: InputMaybe<Scalars['String']>;
-  /** Driver license state */
+  /** Driver license_state */
   licenseState?: InputMaybe<Market>;
-  /** Driver marital status */
+  /** Driver marital_status */
   maritalStatus?: InputMaybe<MaritalStatus>;
-  /** Driver is a member of the national guard */
-  nationalGuardMember?: InputMaybe<Scalars['Boolean']>;
-  /** Driver only uses vehicles occasionally */
-  occasionalDriver?: InputMaybe<Scalars['Boolean']>;
-  /** Is primary named insured driver */
-  primaryNamedInsured?: InputMaybe<Scalars['Boolean']>;
-  /** Driver has taken a refresher prevention course */
-  refresherPreventionCourse?: InputMaybe<Scalars['Boolean']>;
 };
 
 /** Attributes for selecting profile driver vehicles */
@@ -297,6 +295,30 @@ export type EmbeddedAccountNodeArgs = {
 
 
 export type EmbeddedAccountNodesArgs = {
+  ids: Array<Scalars['ID']>;
+};
+
+export type Form = {
+  __typename?: 'Form';
+  /** Required fields to complete the operation */
+  inputs: Array<FormInput>;
+  /** Connected mutation for the form */
+  mutation?: Maybe<Mutation>;
+  /** Fetches an object given its ID. */
+  node?: Maybe<Node>;
+  /** Fetches a list of objects given a list of IDs. */
+  nodes: Array<Maybe<Node>>;
+  /** Suggested title of the form */
+  title?: Maybe<Scalars['String']>;
+};
+
+
+export type FormNodeArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type FormNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
@@ -649,18 +671,22 @@ export type Profile = {
   vehicles: Array<Vehicle>;
 };
 
+export enum ProfileFormOperation {
+  AddDriver = 'ADD_DRIVER',
+  AddVehicle = 'ADD_VEHICLE',
+  UpdateProfile = 'UPDATE_PROFILE'
+}
+
 /** Attributes for a profile */
 export type ProfileInput = {
-  /** Email address */
+  /** Profile email */
   email?: InputMaybe<Scalars['String']>;
-  /** Homeowner status */
+  /** Profile homeowner_status */
   homeownerStatus?: InputMaybe<HomeownerStatus>;
-  /** Phone number */
+  /** Profile phone_number */
   phoneNumber?: InputMaybe<Scalars['String']>;
-  /** Primary named innsured driver */
-  primaryNamedInsuredId?: InputMaybe<Scalars['ID']>;
-  /** Rideshare */
-  rideshare?: InputMaybe<Scalars['Boolean']>;
+  /** Profile rideshare */
+  rideshare?: InputMaybe<Scalars['String']>;
 };
 
 export type ProfileOperation = {
@@ -833,17 +859,6 @@ export type SelectFormInputNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
-export enum Subject {
-  /** Perform an action against an additional vehicle */
-  AdditionalVehicle = 'ADDITIONAL_VEHICLE',
-  /** Perform an action against an additional driver */
-  Driver = 'DRIVER',
-  /** Perform an action against a profile */
-  Profile = 'PROFILE',
-  /** Perform an action against a quote tier */
-  Quote = 'QUOTE'
-}
-
 export type TextFormInput = FormInput & {
   __typename?: 'TextFormInput';
   description?: Maybe<Scalars['String']>;
@@ -895,6 +910,7 @@ export type UnderwritingDecisionNodesArgs = {
 
 export type Vehicle = Node & {
   __typename?: 'Vehicle';
+  form?: Maybe<Form>;
   id: Scalars['ID'];
   make?: Maybe<Scalars['String']>;
   model?: Maybe<Scalars['String']>;
@@ -908,6 +924,11 @@ export type Vehicle = Node & {
 };
 
 
+export type VehicleFormArgs = {
+  operation: VehicleFormOperation;
+};
+
+
 export type VehicleNodeArgs = {
   id: Scalars['ID'];
 };
@@ -917,17 +938,48 @@ export type VehicleNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
+export enum VehicleFormOperation {
+  EditVehicle = 'EDIT_VEHICLE'
+}
+
 /** Attributes for creating or updating a profile vehicle */
 export type VehicleInput = {
+  /** Vehicle annualized_mileage */
+  annualizedMileage?: InputMaybe<Scalars['Int']>;
+  /** Vehicle anti_theft_equipment */
+  antiTheftEquipment?: InputMaybe<Scalars['Boolean']>;
   /** Vehicle make */
   make?: InputMaybe<Scalars['String']>;
   /** Vehicle model */
   model?: InputMaybe<Scalars['String']>;
-  /** Vehicle VIN */
+  /** Vehicle primary_usage */
+  primaryUsage?: InputMaybe<VehiclePrimaryUsage>;
+  /** Vehicle purchase_date */
+  purchaseDate?: InputMaybe<Scalars['ISO8601Date']>;
+  /** Vehicle vin */
   vin?: InputMaybe<Scalars['String']>;
-  /** Vehicle creation year */
+  /** Vehicle vin_etching */
+  vinEtching?: InputMaybe<Scalars['Boolean']>;
+  /** Vehicle year */
   year?: InputMaybe<Scalars['Int']>;
 };
+
+export enum VehiclePrimaryUsage {
+  /** business */
+  Business = 'business',
+  /** commute */
+  Commute = 'commute',
+  /** farm */
+  Farm = 'farm',
+  /** occasional */
+  Occasional = 'occasional',
+  /** pleasure */
+  Pleasure = 'pleasure',
+  /** rideshare */
+  Rideshare = 'rideshare',
+  /** work */
+  Work = 'work'
+}
 
 /** Attributes for selecting profile vehicle drivers */
 export type VehicleSelectDrivers = {
