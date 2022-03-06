@@ -7,4 +7,10 @@ export { default as TextInput } from '@embedded-bind/react/components/inputs/tex
 export { default as EmbeddedApp } from '@embedded-bind/react/embedded-client/app/app';
 export { default as IncompleteProfileForm } from '@embedded-bind/react/embedded-client/app/incomplete-profile-form';
 
+export { default as CompletedProfileAddDriverForm } from '@embedded-bind/react/embedded-client/app/add-driver-completed-profile-form';
+export { default as CompletedProfileAddVehicleForm } from '@embedded-bind/react/embedded-client/app/add-vehicle-completed-profile-form';
+export { default as CompletedProfileUpdateForm } from '@embedded-bind/react/embedded-client/app/update-completed-profile-form';
+
+export { default as FormFields } from '@embedded-bind/react/embedded-client/components/form-fields';
+
 export { default as EmbeddedClientProvider } from '@embedded-bind/react/embedded-client-provider/embedded-client-provider'

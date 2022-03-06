@@ -3,8 +3,9 @@ import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
 import { TextInput as BaseTextInput } from "@mantine/core"
 import createClient from '@embedded-bind/client';
-import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm } from '@embedded-bind/react';
+import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, FormFields } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
+import { FormInputTypesFragment } from "./react/graphql/generated";
 
 const client = createClient({
   headers: {
@@ -58,6 +59,21 @@ render(
                       <p>
                         {JSON.stringify(data.embeddedAccount.profile)}
                       </p>
+                      <CompletedProfileUpdateForm attemptPrefill={false} externalUserId={externalId}>
+                        {({ inputs, title }) => (
+                           <FormFields inputs={inputs as FormInputTypesFragment[]} />
+                          )}
+                      </CompletedProfileUpdateForm>
+                      <CompletedProfileAddDriverForm externalUserId={externalId}>
+                        {({ inputs, title }) => (
+                           <FormFields inputs={inputs as FormInputTypesFragment[]} />
+                          )}
+                      </CompletedProfileAddDriverForm>
+                      <CompletedProfileAddVehicleForm externalUserId={externalId}>
+                      {({ inputs, title }) => (
+                           <FormFields inputs={inputs as FormInputTypesFragment[]} />
+                          )}
+                      </CompletedProfileAddVehicleForm>
                     </>
                   )
                 }
