@@ -14,8 +14,9 @@ mutation CompletedProfileEditVehicle(
       profile {
         id
         completed
-        ... on CompletedProfile {
-          ...CompletedProfileAddVehicleForm
+        vehicles {
+          id
+          ...CompletedProfileEditVehicleForm
         }
       }
     }

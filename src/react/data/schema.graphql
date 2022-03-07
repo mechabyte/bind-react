@@ -212,6 +212,9 @@ input DriverInput {
   """Driver accident_prevention_course"""
   accidentPreventionCourse: Boolean
 
+  """Driver active_duty_military"""
+  activeDutyMilitary: Boolean
+
   """Driver date_of_birth"""
   dateOfBirth: ISO8601Date
 
@@ -311,13 +314,8 @@ interface FormInput {
 }
 
 enum Gender {
-  """FEMALE"""
   F
-
-  """MALE"""
   M
-
-  """NOT_SPECIFIED"""
   X
 }
 

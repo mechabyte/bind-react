@@ -14,8 +14,11 @@ mutation CompletedProfileEditDriver(
       profile {
         id
         completed
-        ... on CompletedProfile {
-          ...CompletedProfileAddVehicleForm
+        drivers {
+          id
+          firstName
+          lastName
+          ...CompletedProfileEditDriverForm
         }
       }
     }
