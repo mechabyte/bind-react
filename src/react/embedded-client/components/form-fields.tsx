@@ -8,6 +8,7 @@ import { FormInputTypesFragment, CheckboxFormInput, DateFormInput, NumberFormInp
 interface FormInputsProps<T extends FormInputTypesFragment> {
   inputs: FormInputTypesFragment[],
   onSubmit: undefined | ((values: T) => void),
+  submitting: boolean,
 }
 
 const fieldValueUtil = ({ __typename, ...restField }: { __typename: string }) => {
@@ -27,7 +28,7 @@ const fieldValueUtil = ({ __typename, ...restField }: { __typename: string }) =>
   }
 }
 
-function FormInputs<T>({ inputs, onSubmit }: FormInputsProps<T>) {
+function FormInputs<T>({ inputs, onSubmit, submitting }: FormInputsProps<T>) {
 
   const initialValues = useMemo(() => {
     if (inputs) {
@@ -128,7 +129,7 @@ function FormInputs<T>({ inputs, onSubmit }: FormInputsProps<T>) {
           )
       })
     }
-    { onSubmit && <Button onClick={handleSubmit}>Submit</Button>}
+    { onSubmit && <Button loading={submitting} onClick={handleSubmit}>Submit</Button>}
     </ul>
   )
 }

@@ -5,7 +5,7 @@ import { useForm } from '@mantine/hooks';
 import { useCallback, useMemo } from 'react';
 import GET_ADD_VEHICLE_COMPLETED_PROFILE from '@embedded-bind/react/operations/queries/get-completed-profile-add-vehicle';
 import ADD_VEHICLE_COMPLETED_PROFILE_MUTATION from '@embedded-bind/react/operations/mutations/completed-profile-add-vehicle';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery, FetchResult } from '@apollo/client';
 import { 
   GetCompletedProfileAddVehicleQuery,
   GetCompletedProfileAddVehicleQueryVariables,
@@ -16,7 +16,9 @@ import {
 
 interface AddVehicleCompletedProfileFormRenderProps {
   inputs: Form['inputs'],
-  addVehicle: (input: CompletedProfileAddVehicleMutationVariables['input']) => void,
+  addVehicle: (input: CompletedProfileAddVehicleMutationVariables['input']) => Promise<FetchResult<CompletedProfileAddVehicleMutation>>,
+  addingVehicle: boolean,
+  loadingForm: boolean,
   title: Form['title'],
 }
 
@@ -36,15 +38,9 @@ function AddVehicleCompletedProfileForm({ attemptPrefill, children, externalUser
 
   const [mutate, { loading: loadingMutation }] = useMutation<CompletedProfileAddVehicleMutation, CompletedProfileAddVehicleMutationVariables>(ADD_VEHICLE_COMPLETED_PROFILE_MUTATION)
 
-  const handleSubmit = useCallback((input: CompletedProfileAddVehicleMutationVariables['input']) => {
-    mutate({
+  const handleSubmit = useCallback((input: CompletedProfileAddVehicleMutationVariables['input']) => mutate({
       variables: { externalUserId, input, attemptPrefill: attemptPrefill || false }
-    })
-  }, [attemptPrefill, externalUserId, mutate]);
-
-  if (loading) {
-    return null;
-  }
+    }), [attemptPrefill, externalUserId, mutate]);
 
   if (error) {
     return null;
@@ -55,7 +51,9 @@ function AddVehicleCompletedProfileForm({ attemptPrefill, children, externalUser
     return children({
       title: data.embeddedAccount?.profile?.form?.title,
       inputs: data.embeddedAccount?.profile?.form?.inputs,
-      addVehicle: handleSubmit
+      loadingForm: loading,
+      addVehicle: handleSubmit,
+      addingVehicle: loadingMutation
     });
   }
 

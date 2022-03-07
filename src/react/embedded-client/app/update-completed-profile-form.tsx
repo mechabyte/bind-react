@@ -5,7 +5,7 @@ import { useForm } from '@mantine/hooks';
 import { useCallback, useMemo } from 'react';
 import GET_UPDATE_COMPLETED_PROFILE from '@embedded-bind/react/operations/queries/get-completed-profile-update';
 import UPDATE_COMPLETED_PROFILE_MUTATION from '@embedded-bind/react/operations/mutations/completed-profile-update';
-import { ApolloError, useMutation, useQuery } from '@apollo/client';
+import { ApolloError, useMutation, useQuery, FetchResult } from '@apollo/client';
 import { 
   GetCompletedProfileUpdateQuery,
   GetCompletedProfileUpdateQueryVariables,
@@ -17,7 +17,7 @@ import {
 interface UpdateCompletedProfileFormRenderProps {
   inputs: Form['inputs'],
   loadingForm: boolean,
-  updateProfile: (input: CompletedProfileUpdateMutationVariables['input']) => void,
+  updateProfile: (input: CompletedProfileUpdateMutationVariables['input']) => Promise<FetchResult<CompletedProfileUpdateMutation>>,
   updatingProfile: boolean,
   title: Form['title'],
 }
@@ -38,11 +38,11 @@ function UpdateCompletedProfileForm({ attemptPrefill, children, externalUserId }
 
   const [mutate, { loading: loadingMutation }] = useMutation<CompletedProfileUpdateMutation, CompletedProfileUpdateMutationVariables>(UPDATE_COMPLETED_PROFILE_MUTATION)
 
-  const handleSubmit = useCallback((input: CompletedProfileUpdateMutationVariables['input']) => {
+  const handleSubmit = useCallback((input: CompletedProfileUpdateMutationVariables['input']) => 
     mutate({
       variables: { externalUserId, input, attemptPrefill: attemptPrefill || false }
     })
-  }, [attemptPrefill, externalUserId, mutate]);
+  , [attemptPrefill, externalUserId, mutate]);
 
   if (loading) {
     return null;
