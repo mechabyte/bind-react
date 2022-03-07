@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { useMemo, useCallback } from "react";
-import { Button, Checkbox, NumberInput, Select, TextInput } from "@mantine/core";
+import { Button, Checkbox, NumberInput, Select, TextInput, Group } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/hooks";
 import { FormInputTypesFragment, CheckboxFormInput, DateFormInput, NumberFormInput, TextFormInput, SelectFormInput, CompleteProfileInputObject, FormInput } from '@embedded-bind/react/graphql/generated'
@@ -51,7 +51,7 @@ function FormInputs<T>({ inputs, onSubmit, submitting }: FormInputsProps<T>) {
   }, [form, onSubmit]);
 
   return (
-    <ul>
+    <Group direction={'column'}>
       {
         inputs?.map((requiredField: FormInputTypesFragment) => {
 
@@ -59,7 +59,7 @@ function FormInputs<T>({ inputs, onSubmit, submitting }: FormInputsProps<T>) {
           const inputProps = form.getInputProps((requiredField.name as keyof T), { type: isCheckBox ? "checkbox" : "default" });
       
           return (
-              <li key={requiredField.name}>
+              <Group key={requiredField.name} direction={'row'} position={'apart'}>
                 {
                   isCheckBox &&
                   <Checkbox
@@ -125,12 +125,12 @@ function FormInputs<T>({ inputs, onSubmit, submitting }: FormInputsProps<T>) {
                     {...inputProps}
                   />
                 }
-              </li>
+              </Group>
           )
       })
     }
     { onSubmit && <Button loading={submitting} onClick={handleSubmit}>Submit</Button>}
-    </ul>
+    </Group>
   )
 }
 
