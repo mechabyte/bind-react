@@ -126,7 +126,7 @@ type CompleteProfilePayload {
   success: Boolean!
 }
 
-type CompletedProfile implements Profile {
+type CompletedProfile implements Node & Profile {
   completed: Boolean!
   declined: Boolean
   drivers: [Driver!]!
@@ -674,9 +674,11 @@ type Policy implements Node {
   ): [Node]!
 }
 
-interface Profile {
+"""An object with an ID."""
+interface Profile implements Node {
   completed: Boolean!
   drivers: [Driver!]!
+  id: ID!
   mailingAddress: MailingAddress!
   vehicles: [Vehicle!]!
 }

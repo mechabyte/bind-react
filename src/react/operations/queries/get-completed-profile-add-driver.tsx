@@ -6,6 +6,7 @@ query GetCompletedProfileAddDriver($externalId:ID!) {
   embeddedAccount(externalId:$externalId){
     id
     profile {
+      id
       completed
 
       ... on CompletedProfile {

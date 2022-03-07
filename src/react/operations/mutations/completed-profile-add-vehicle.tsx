@@ -11,6 +11,7 @@ mutation CompletedProfileAddVehicle(
     errors
     embeddedAccount {
       profile {
+        id
         completed
         ... on CompletedProfile {
           ...CompletedProfileAddVehicleForm

@@ -11,6 +11,7 @@ mutation CompletedProfileAddDriver(
     errors
     embeddedAccount {
       profile {
+        id
         completed
         ... on CompletedProfile {
           ...CompletedProfileAddDriverForm

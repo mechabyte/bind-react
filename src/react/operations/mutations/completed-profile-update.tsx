@@ -11,6 +11,7 @@ mutation CompletedProfileUpdate(
     errors
     embeddedAccount {
       profile {
+        id
         completed
         ... on CompletedProfile {
           ...CompletedProfileUpdateForm

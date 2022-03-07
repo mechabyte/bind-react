@@ -5,7 +5,7 @@ import { useForm } from '@mantine/hooks';
 import { useCallback, useMemo } from 'react';
 import GET_UPDATE_COMPLETED_PROFILE from '@embedded-bind/react/operations/queries/get-completed-profile-update';
 import UPDATE_COMPLETED_PROFILE_MUTATION from '@embedded-bind/react/operations/mutations/completed-profile-update';
-import { useMutation, useQuery } from '@apollo/client';
+import { ApolloError, useMutation, useQuery } from '@apollo/client';
 import { 
   GetCompletedProfileUpdateQuery,
   GetCompletedProfileUpdateQueryVariables,
@@ -16,7 +16,9 @@ import {
 
 interface UpdateCompletedProfileFormRenderProps {
   inputs: Form['inputs'],
+  loadingForm: boolean,
   updateProfile: (input: CompletedProfileUpdateMutationVariables['input']) => void,
+  updatingProfile: boolean,
   title: Form['title'],
 }
 
@@ -53,9 +55,11 @@ function UpdateCompletedProfileForm({ attemptPrefill, children, externalUserId }
   if (data && data.embeddedAccount?.profile.__typename === "CompletedProfile" && data.embeddedAccount?.profile?.form?.inputs) {
 
     return children({
+      loadingForm: loading,
       title: data.embeddedAccount?.profile?.form?.title,
       inputs: data.embeddedAccount?.profile?.form?.inputs,
-      updateProfile: handleSubmit
+      updateProfile: handleSubmit,
+      updatingProfile: loadingMutation
     });
   }
 

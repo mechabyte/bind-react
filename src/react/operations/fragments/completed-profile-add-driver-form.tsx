@@ -3,6 +3,12 @@ import FORM_INPUT_TYPES_FRAGMENT from './form-input-types'
 
 export default gql`
   fragment CompletedProfileAddDriverForm on CompletedProfile {
+    drivers {
+      id
+      firstName
+      lastName
+    }
+
     form(operation:ADD_DRIVER) {
       title
       inputs {

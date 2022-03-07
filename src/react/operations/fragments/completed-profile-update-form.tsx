@@ -3,6 +3,8 @@ import FORM_INPUT_TYPES_FRAGMENT from './form-input-types'
 
 export default gql`
   fragment CompletedProfileUpdateForm on CompletedProfile {
+    id
+
     form(operation:UPDATE_PROFILE) {
       title
       inputs {

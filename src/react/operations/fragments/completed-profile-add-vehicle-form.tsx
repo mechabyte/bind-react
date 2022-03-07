@@ -3,6 +3,12 @@ import FORM_INPUT_TYPES_FRAGMENT from './form-input-types'
 
 export default gql`
   fragment CompletedProfileAddVehicleForm on CompletedProfile {
+    vehicles {
+      id
+      make
+      model
+      year
+    }
     form(operation:ADD_VEHICLE) {
       title
       inputs {
