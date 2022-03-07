@@ -253,7 +253,7 @@ input DriverTargetInput {
 """Attributes for updating an additional profile vehicle"""
 input EditAdditionalVehicleInput {
   additionalVehicleId: ID!
-  updates: AdditionalVehicleInput!
+  updates: VehicleInput!
 }
 
 """Attributes for updating a profile driver"""

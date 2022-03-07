@@ -5,7 +5,7 @@ const COMPLETED_PROFILE_EDIT_VEHICLE_MUTATION = gql`
 mutation CompletedProfileEditVehicle(
   $externalUserId:String!,
   $vehicleId: ID!,
-  $input:AdditionalVehicleInput!,
+  $input:VehicleInput!,
   $attemptPrefill:Boolean!
 ) {
   performProfileOperations(input:{externalUserId:$externalUserId,operations:[{editAdditionalVehicle:{additionalVehicleId:$vehicleId,updates:$input}}],attemptPrefill:$attemptPrefill}) {
@@ -16,6 +16,9 @@ mutation CompletedProfileEditVehicle(
         completed
         vehicles {
           id
+          year
+          make
+          model
           ...CompletedProfileEditVehicleForm
         }
       }

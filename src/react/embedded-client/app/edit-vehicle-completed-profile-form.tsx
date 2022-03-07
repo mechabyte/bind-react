@@ -1,6 +1,6 @@
 /* eslit-disable no-underscore-dangle */
 import { useCallback } from 'react';
-import EDIT_VEHICLE_COMPLETED_PROFILE_MUTATION from '@embedded-bind/react/operations/mutations/completed-profile-add-vehicle';
+import EDIT_VEHICLE_COMPLETED_PROFILE_MUTATION from '@embedded-bind/react/operations/mutations/completed-profile-edit-vehicle';
 import { useMutation, FetchResult } from '@apollo/client';
 import {
   CompletedProfileEditVehicleMutation,

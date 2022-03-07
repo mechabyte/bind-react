@@ -160,7 +160,7 @@ render(
                       {
                         displayEditVehicle && <CompletedProfileEditVehicleForm externalUserId={externalId} vehicle={displayEditVehicle}>
                           {({ inputs, title, editVehicle, editingVehicle }) => {
-                          const onSubmitForm = (input: VehicleInput) => {
+                          const onSubmitForm = (input: AdditionalVehicleInput) => {
                             editVehicle(input).then(() => setDisplayEditVehicle(undefined))
                           }
                           return (
