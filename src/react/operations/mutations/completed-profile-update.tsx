@@ -8,6 +8,7 @@ mutation CompletedProfileUpdate(
   $attemptPrefill:Boolean!
 ) {
   performProfileOperations(input:{externalUserId:$externalUserId,operations:[{updateProfile:$input}],attemptPrefill:$attemptPrefill}) {
+    errors
     embeddedAccount {
       profile {
         completed

@@ -1,12 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 import { useMemo, useCallback } from "react";
-import { Checkbox, NumberInput, Select, TextInput } from "@mantine/core";
+import { Button, Checkbox, NumberInput, Select, TextInput } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/hooks";
 import { FormInputTypesFragment, CheckboxFormInput, DateFormInput, NumberFormInput, TextFormInput, SelectFormInput, CompleteProfileInputObject, FormInput } from '@embedded-bind/react/graphql/generated'
 
-interface FormInputsProps<T> {
+interface FormInputsProps<T extends FormInputTypesFragment> {
   inputs: FormInputTypesFragment[],
+  onSubmit: undefined | ((values: T) => void),
 }
 
 const fieldValueUtil = ({ __typename, ...restField }: { __typename: string }) => {
@@ -26,7 +27,7 @@ const fieldValueUtil = ({ __typename, ...restField }: { __typename: string }) =>
   }
 }
 
-function FormInputs<T>({ inputs }: FormInputsProps<T>) {
+function FormInputs<T>({ inputs, onSubmit }: FormInputsProps<T>) {
 
   const initialValues = useMemo(() => {
     if (inputs) {
@@ -41,9 +42,12 @@ function FormInputs<T>({ inputs }: FormInputsProps<T>) {
     initialValues: initialValues as T,
   });
 
-  const handleDateChange = useCallback((fieldName) => (updatedDate: Date) => {
-    form.setFieldValue((fieldName as keyof T), updatedDate.toISOString().split('T')[0] as unknown as T[keyof T])
-  }, [form]);
+  const handleSubmit = useCallback(() => {
+    if (onSubmit) {
+      console.log(`Attempting to call submit from form with values: ${JSON.stringify(form.values)}`)
+      onSubmit(form.values);
+    }
+  }, [form, onSubmit]);
 
   return (
     <ul>
@@ -77,7 +81,9 @@ function FormInputs<T>({ inputs }: FormInputsProps<T>) {
                     required={requiredField.required || false}
                     label={requiredField.label}
                     // eslint-disable-next-line react/jsx-props-no-spreading
-                    onChange={handleDateChange}
+                    onChange={(updatedDate) => {
+                      form.setFieldValue((requiredField.name as keyof T), updatedDate?.toISOString().split('T')[0] as unknown as T[keyof T])
+                    }}
                     value={new Date(inputProps.value)}
                   />
                 }
@@ -122,6 +128,7 @@ function FormInputs<T>({ inputs }: FormInputsProps<T>) {
           )
       })
     }
+    { onSubmit && <Button onClick={handleSubmit}>Submit</Button>}
     </ul>
   )
 }

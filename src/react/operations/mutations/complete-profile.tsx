@@ -8,6 +8,7 @@ mutation CompleteProfile(
   $input:CompleteProfileInputObject!
 ) {
   completeProfile(input:{externalUserId:$externalUserId,attributes:$input}) {
+    errors
     embeddedAccount {
       profile {
         completed

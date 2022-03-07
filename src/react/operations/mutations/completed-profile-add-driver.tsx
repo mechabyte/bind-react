@@ -8,6 +8,7 @@ mutation CompletedProfileAddDriver(
   $attemptPrefill:Boolean!
 ) {
   performProfileOperations(input:{externalUserId:$externalUserId,operations:[{addDriver:$input}],attemptPrefill:$attemptPrefill}) {
+    errors
     embeddedAccount {
       profile {
         completed

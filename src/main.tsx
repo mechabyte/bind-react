@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
-import { TextInput as BaseTextInput } from "@mantine/core"
+import { TextInput as BaseTextInput, Button } from "@mantine/core"
 import createClient from '@embedded-bind/client';
 import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, FormFields } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
@@ -57,21 +57,42 @@ render(
                     <>
                       <h1>Completed profile!</h1>
                       <p>
-                        {JSON.stringify(data.embeddedAccount.profile)}
+                        <h4>Drivers:</h4>
+                        <ul>
+                          {
+                            data.embeddedAccount.profile.drivers.map((driver) => 
+                              <li key={driver.id}>
+                                {driver.firstName} {driver.lastName}
+                              </li>
+                            )
+                          }
+                        </ul>
+                      </p>
+                      <p>
+                        <h4>Vehicles:</h4>
+                        <ul>
+                          {
+                            data.embeddedAccount.profile.vehicles.map((vehicle) => 
+                              <li key={vehicle.id}>
+                                {vehicle.year} {vehicle.make} {vehicle.model}
+                              </li>
+                            )
+                          }
+                        </ul>
                       </p>
                       <CompletedProfileUpdateForm attemptPrefill={false} externalUserId={externalId}>
-                        {({ inputs, title }) => (
-                           <FormFields inputs={inputs as FormInputTypesFragment[]} />
+                        {({ inputs, title, updateProfile }) => (
+                           <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={updateProfile} />
                           )}
                       </CompletedProfileUpdateForm>
                       <CompletedProfileAddDriverForm externalUserId={externalId}>
-                        {({ inputs, title }) => (
-                           <FormFields inputs={inputs as FormInputTypesFragment[]} />
+                        {({ inputs, title, addDriver }) => (
+                           <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={addDriver} />
                           )}
                       </CompletedProfileAddDriverForm>
                       <CompletedProfileAddVehicleForm externalUserId={externalId}>
-                      {({ inputs, title }) => (
-                           <FormFields inputs={inputs as FormInputTypesFragment[]} />
+                      {({ inputs, title, addVehicle }) => (
+                           <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={addVehicle} />
                           )}
                       </CompletedProfileAddVehicleForm>
                     </>
