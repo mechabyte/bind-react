@@ -13,14 +13,14 @@ import {
   GetCompletedProfileAddDriverQueryVariables,
   CompletedProfileAddDriverMutation,
   CompletedProfileAddDriverMutationVariables,
-  Form
+  Form,
+  CompletedProfileAddVehicleFormFragment,
  } from '../../graphql/generated';
 
 interface AddDriverCompletedProfileFormRenderProps {
   inputs: Form['inputs'],
   addDriver: (input: CompletedProfileAddDriverMutationVariables['input']) => Promise<FetchResult<CompletedProfileAddDriverMutation>>,
   addingDriver: boolean,
-  loadingForm: boolean,
   title: Form['title'],
 }
 
@@ -28,16 +28,11 @@ interface AddDriverCompletedProfileFormProps {
   attemptPrefill?: boolean;
   children: (props: AddDriverCompletedProfileFormRenderProps) => JSX.Element;
   externalUserId: string;
+  profile: CompletedProfileAddDriverFormFragment;
 }
 
-function AddDriverCompletedProfileForm({ attemptPrefill, children, externalUserId }: AddDriverCompletedProfileFormProps) {
+function AddDriverCompletedProfileForm({ attemptPrefill, children, externalUserId, profile }: AddDriverCompletedProfileFormProps) {
   
-  const {
-    data,
-    error,
-    loading,
-  } = useQuery<GetCompletedProfileAddDriverQuery, GetCompletedProfileAddDriverQueryVariables>(GET_ADD_DRIVER_COMPLETED_PROFILE, { variables: { externalId: externalUserId }});
-
   const [mutate, { loading: loadingMutation }] = useMutation<CompletedProfileAddDriverMutation, CompletedProfileAddDriverMutationVariables>(ADD_DRIVER_COMPLETED_PROFILE_MUTATION)
 
   const handleSubmit = useCallback((input: CompletedProfileAddDriverMutationVariables['input']) => 
@@ -46,16 +41,11 @@ function AddDriverCompletedProfileForm({ attemptPrefill, children, externalUserI
     })
   , [attemptPrefill, externalUserId, mutate]);
 
-  if (error) {
-    return null;
-  }
-
-  if (data && data.embeddedAccount?.profile.__typename === "CompletedProfile" && data.embeddedAccount?.profile?.form?.inputs) {
+  if (profile.__typename === "CompletedProfile" && profile?.addDriverForm?.inputs) {
 
     return children({
-      loadingForm: loading,
-      title: data.embeddedAccount?.profile?.form?.title,
-      inputs: data.embeddedAccount?.profile?.form?.inputs,
+      title: profile?.addDriverForm?.title,
+      inputs: profile.addDriverForm.inputs,
       addDriver: handleSubmit,
       addingDriver: loadingMutation
     });

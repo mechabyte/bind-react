@@ -9,6 +9,8 @@ export { default as IncompleteProfileForm } from '@embedded-bind/react/embedded-
 
 export { default as CompletedProfileAddDriverForm } from '@embedded-bind/react/embedded-client/app/add-driver-completed-profile-form';
 export { default as CompletedProfileAddVehicleForm } from '@embedded-bind/react/embedded-client/app/add-vehicle-completed-profile-form';
+export { default as CompletedProfileEditDriverForm } from '@embedded-bind/react/embedded-client/app/edit-driver-completed-profile-form';
+export { default as CompletedProfileEditVehicleForm } from '@embedded-bind/react/embedded-client/app/edit-vehicle-completed-profile-form';
 export { default as CompletedProfileUpdateForm } from '@embedded-bind/react/embedded-client/app/update-completed-profile-form';
 
 export { default as FormFields } from '@embedded-bind/react/embedded-client/components/form-fields';

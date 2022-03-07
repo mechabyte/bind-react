@@ -2,14 +2,9 @@ import { gql } from '@apollo/client';
 import FORM_INPUT_TYPES_FRAGMENT from './form-input-types'
 
 export default gql`
-  fragment CompletedProfileAddVehicleForm on CompletedProfile {
-    vehicles {
-      id
-      make
-      model
-      year
-    }
-    addVehicleForm: form(operation:ADD_VEHICLE) {
+  fragment CompletedProfileEditDriverForm on Driver {
+    id
+    editDriverForm: form(operation:EDIT_DRIVER) {
       title
       inputs {
         __typename

@@ -9,6 +9,7 @@ import { useMutation, useQuery, FetchResult } from '@apollo/client';
 import { 
   GetCompletedProfileAddVehicleQuery,
   GetCompletedProfileAddVehicleQueryVariables,
+  CompletedProfileAddVehicleFormFragment,
   CompletedProfileAddVehicleMutation,
   CompletedProfileAddVehicleMutationVariables,
   Form
@@ -18,7 +19,6 @@ interface AddVehicleCompletedProfileFormRenderProps {
   inputs: Form['inputs'],
   addVehicle: (input: CompletedProfileAddVehicleMutationVariables['input']) => Promise<FetchResult<CompletedProfileAddVehicleMutation>>,
   addingVehicle: boolean,
-  loadingForm: boolean,
   title: Form['title'],
 }
 
@@ -26,32 +26,22 @@ interface AddVehicleCompletedProfileFormProps {
   attemptPrefill?: boolean;
   children: (props: AddVehicleCompletedProfileFormRenderProps) => JSX.Element;
   externalUserId: string;
+  profile: CompletedProfileAddVehicleFormFragment
 }
 
-function AddVehicleCompletedProfileForm({ attemptPrefill, children, externalUserId }: AddVehicleCompletedProfileFormProps) {
+function AddVehicleCompletedProfileForm({ attemptPrefill, children, externalUserId, profile }: AddVehicleCompletedProfileFormProps) {
   
-  const {
-    data,
-    error,
-    loading,
-  } = useQuery<GetCompletedProfileAddVehicleQuery, GetCompletedProfileAddVehicleQueryVariables>(GET_ADD_VEHICLE_COMPLETED_PROFILE, { variables: { externalId: externalUserId }});
-
   const [mutate, { loading: loadingMutation }] = useMutation<CompletedProfileAddVehicleMutation, CompletedProfileAddVehicleMutationVariables>(ADD_VEHICLE_COMPLETED_PROFILE_MUTATION)
 
   const handleSubmit = useCallback((input: CompletedProfileAddVehicleMutationVariables['input']) => mutate({
       variables: { externalUserId, input, attemptPrefill: attemptPrefill || false }
     }), [attemptPrefill, externalUserId, mutate]);
 
-  if (error) {
-    return null;
-  }
-
-  if (data && data.embeddedAccount?.profile.__typename === "CompletedProfile" && data.embeddedAccount?.profile?.form?.inputs) {
+  if (profile.__typename === "CompletedProfile" && profile?.addVehicleForm?.inputs) {
 
     return children({
-      title: data.embeddedAccount?.profile?.form?.title,
-      inputs: data.embeddedAccount?.profile?.form?.inputs,
-      loadingForm: loading,
+      title: profile?.addVehicleForm?.title,
+      inputs: profile?.addVehicleForm?.inputs,
       addVehicle: handleSubmit,
       addingVehicle: loadingMutation
     });

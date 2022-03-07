@@ -9,7 +9,7 @@ export default gql`
       lastName
     }
 
-    form(operation:ADD_DRIVER) {
+    addDriverForm: form(operation:ADD_DRIVER) {
       title
       inputs {
         __typename
