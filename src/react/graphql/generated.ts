@@ -1044,6 +1044,24 @@ export type CompletedProfileAddVehicleMutationVariables = Exact<{
 
 export type CompletedProfileAddVehicleMutation = { __typename?: 'Mutation', performProfileOperations?: { __typename?: 'PerformProfileOperationsPayload', errors?: Array<string> | null, embeddedAccount?: { __typename?: 'EmbeddedAccount', profile: { __typename?: 'CompletedProfile', id: string, completed: boolean, vehicles: Array<{ __typename?: 'Vehicle', id: string, make?: string | null, model?: string | null, year?: number | null }>, form?: { __typename?: 'Form', title?: string | null, inputs: Array<{ __typename: 'CheckboxFormInput', checked: boolean, disabled?: boolean | null, label?: string | null, required?: boolean | null, name: string } | { __typename: 'DateFormInput', disabled?: boolean | null, label?: string | null, maxDate?: any | null, minDate?: any | null, placeholder?: string | null, required?: boolean | null, selectedDate?: any | null, name: string } | { __typename: 'NumberFormInput', description?: string | null, disabled?: boolean | null, label?: string | null, maxValue?: number | null, minValue?: number | null, placeholder?: string | null, required?: boolean | null, name: string, numericValue?: number | null } | { __typename: 'SelectFormInput', disabled?: boolean | null, label?: string | null, required?: boolean | null, selectedOption?: string | null, name: string, options: Array<{ __typename?: 'InputOption', label: string, value: string }> } | { __typename: 'TextFormInput', description?: string | null, disabled?: boolean | null, label?: string | null, placeholder?: string | null, required?: boolean | null, value?: string | null, name: string }> } | null } | { __typename?: 'IncompleteProfile', id: string, completed: boolean } } | null } | null };
 
+export type CompletedProfileRemoveDriverMutationVariables = Exact<{
+  externalUserId: Scalars['String'];
+  driverId: Scalars['ID'];
+  attemptPrefill: Scalars['Boolean'];
+}>;
+
+
+export type CompletedProfileRemoveDriverMutation = { __typename?: 'Mutation', performProfileOperations?: { __typename?: 'PerformProfileOperationsPayload', errors?: Array<string> | null, embeddedAccount?: { __typename?: 'EmbeddedAccount', profile: { __typename?: 'CompletedProfile', id: string, completed: boolean, drivers: Array<{ __typename?: 'Driver', id: string }> } | { __typename?: 'IncompleteProfile', id: string, completed: boolean, drivers: Array<{ __typename?: 'Driver', id: string }> } } | null } | null };
+
+export type CompletedProfileRemoveVehicleMutationVariables = Exact<{
+  externalUserId: Scalars['String'];
+  additionalVehicleId: Scalars['ID'];
+  attemptPrefill: Scalars['Boolean'];
+}>;
+
+
+export type CompletedProfileRemoveVehicleMutation = { __typename?: 'Mutation', performProfileOperations?: { __typename?: 'PerformProfileOperationsPayload', errors?: Array<string> | null, embeddedAccount?: { __typename?: 'EmbeddedAccount', profile: { __typename?: 'CompletedProfile', id: string, completed: boolean, vehicles: Array<{ __typename?: 'Vehicle', id: string }> } | { __typename?: 'IncompleteProfile', id: string, completed: boolean, vehicles: Array<{ __typename?: 'Vehicle', id: string }> } } | null } | null };
+
 export type CompletedProfileUpdateMutationVariables = Exact<{
   externalUserId: Scalars['String'];
   input: ProfileInput;

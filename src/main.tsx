@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
-import { TextInput as BaseTextInput, Button, Modal, ActionIcon } from "@mantine/core"
+import { TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text } from "@mantine/core"
 import createClient from '@embedded-bind/client';
 import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, FormFields } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
-import { AdditionalVehicleInput, DriverInput, FormInputTypesFragment, VehicleInput } from "./react/graphql/generated";
+import { AdditionalVehicleInput, DriverInput, ProfileInput, FormInputTypesFragment, VehicleInput } from "./react/graphql/generated";
 
 const client = createClient({
   headers: {
@@ -63,7 +63,7 @@ render(
       <TextInputWrapper>
         {({ externalId, displayAddDriver, displayAddVehicle, displayUpdateProfile, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
             <EmbeddedApp externalId={externalId}>
-              {({ data, loading, error }) => {
+              {({ data, loading, error, removeDriver, removeVehicle }) => {
                 if (error) {
                   return (
                     <h2>{error.message}</h2>
@@ -88,30 +88,28 @@ render(
                       </Button>
                       <p>
                         <h4>Drivers:</h4>
-                        <ul>
                           {
                             data.embeddedAccount.profile.drivers.map((driver) => 
-                              <li key={driver.id}>
-                                {driver.firstName} {driver.lastName}
-                              </li>
+                            <Group position="left" key={driver.id}>
+                              <Text>{driver.firstName} {driver.lastName}</Text>
+                              <CloseButton title="Remove driver" size="xl" iconSize={20} onClick={() => removeDriver({ driverId: driver.id, externalUserId: externalId, attemptPrefill: true })} />
+                            </Group>
                             )
                           }
-                        </ul>
-                        <Button size="xs" onClick={() => setDisplayAddDriver(true)}>
+                         <Button size="xs" onClick={() => setDisplayAddDriver(true)}>
                           ADD
                         </Button>
                       </p>
                       <p>
                         <h4>Vehicles:</h4>
-                        <ul>
                           {
                             data.embeddedAccount.profile.vehicles.map((vehicle) => 
-                              <li key={vehicle.id}>
-                                {vehicle.year} {vehicle.make} {vehicle.model}
-                              </li>
+                            <Group position="left" key={vehicle.id}>
+                              <Text>{vehicle.year} {vehicle.make} {vehicle.model}</Text>
+                              <CloseButton title="Remove vehicle" size="xl" iconSize={20} onClick={() => removeVehicle({ additionalVehicleId: vehicle.id, externalUserId: externalId, attemptPrefill: true })} />
+                            </Group>
                             )
                           }
-                        </ul>
                         <Button size="xs" onClick={() => setDisplayAddVehicle(true)}>
                           ADD
                         </Button>
