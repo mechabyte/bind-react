@@ -92,10 +92,11 @@ render(
                 if (data?.embeddedAccount?.profile?.__typename === 'CompletedProfile') {
                   return (
                     <>
-                      <h3>Completed profile!</h3>
+                      <p>
                       <Button size="xs" onClick={() => setDisplayUpdateProfile(true)}>
-                        EDIT
+                        EDIT PROFILE
                       </Button>
+                      </p>
                       <p>
                         <h4>Drivers:</h4>
                           {
