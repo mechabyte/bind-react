@@ -699,7 +699,7 @@ input ProfileInput {
   phoneNumber: String
 
   """Profile rideshare"""
-  rideshare: String
+  rideshare: Boolean
 }
 
 input ProfileOperation {

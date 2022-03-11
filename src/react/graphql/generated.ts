@@ -687,7 +687,7 @@ export type ProfileInput = {
   /** Profile phone_number */
   phoneNumber?: InputMaybe<Scalars['String']>;
   /** Profile rideshare */
-  rideshare?: InputMaybe<Scalars['String']>;
+  rideshare?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ProfileOperation = {
