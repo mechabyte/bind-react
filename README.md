@@ -1,42 +1,38 @@
-# React Template（⚡️）
+# Embedded Bind ⚡️
 
-🚀 A React quick start project template powered by vite.
+🚀 A React GraphQL client to perform embedded checkout with `root-monorepo` ([link](https://github.com/Root-App/root-monorepo/tree/matt-spike-embedded-graphql-poc))
 
-## Feature
+## Features
 
-- ⚡️ Fast - Build tools based on vite.
-- 👻 Small - Based on the smallest runnable build.
-- 💄 Prettier - Integrated Prettier to help you format the code.
-- ✅ Safety - Https is enabled by default.
-- 😎 Reliable - Integrated eslint and commitlint.
-- 🤖 Intelligent - Integrated renovate to help you maintain the dependent version.
+- ⚡️ Fast - Build tools based on vite
+- 👻 Small - Minimize code with tree-shaking
+- ✅ Safe - Https is enabled by default.
+- 😎 Reliable - Integrated eslint and commitlint, with auto-generated API responses and requests
 
 ## Getting Started
 
 
 ```bash
-npx degit 0x219/vite-template-react-plus myapp
-
-cd myapp
+yarn graphql:codegen
+yarn vite
 ```
 
 ### Prerequisites
 
-- `npm` and `pnpm` should be installed.
-- `git` should be installed (recommended v2.4.11 or higher)
+- `yarn` should be installed.
 
 ### Available scripts
 
 
-#### `pnpm dev`
+#### `yarn vite`
 
 Runs the app in development mode.
-Open https://localhost:3000 to view it in the browser.
+Open https://localhost:1338 to view it in the browser.
 
 The page will automatically reload if you make changes to the code.
 You will see the build errors and lint warnings in the console.
 
-#### `pnpm build`
+#### `yarn build`
 
 Builds the app for production to the `dist` folder.
 It correctly bundles React in production mode and optimizes the build for the best performance.
