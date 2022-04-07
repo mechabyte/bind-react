@@ -2,18 +2,20 @@ import { gql } from '@apollo/client';
 
 const COMPLETED_PROFILE_REMOVE_DRIVER_MUTATION = gql`
 mutation CompletedProfileRemoveDriver(
-  $externalUserId:String!,
+  $externalId:String!,
   $driverId:ID!,
-  $attemptPrefill:Boolean!
+  $attemptQuote:Boolean!
 ) {
-  performProfileOperations(input:{externalUserId:$externalUserId,operations:[{removeDriver:{driverId:$driverId}}],attemptPrefill:$attemptPrefill}) {
+  performProfileOperations(input:{externalId:$externalId,operations:[{removeDriver:{driverId:$driverId}}],attemptQuote:$attemptQuote}) {
     errors
-    embeddedAccount {
-      profile {
-        id
-        completed
-        drivers {
+    account {
+      ... on ConsentedAccount {
+        profile {
           id
+          completed
+          drivers {
+            id
+          }
         }
       }
     }

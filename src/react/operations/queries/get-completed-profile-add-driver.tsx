@@ -3,14 +3,16 @@ import COMPLETED_PROFILE_ADD_DRIVER_FORM_FRAGMENT from '../fragments/completed-p
 
 const COMPLETED_PROFILE_ADD_DRIVER_QUERY = gql`
 query GetCompletedProfileAddDriver($externalId:ID!) {
-  embeddedAccount(externalId:$externalId){
+  account(externalId:$externalId){
     id
-    profile {
-      id
-      completed
+    ... on ConsentedAccount {
+      profile {
+        id
+        completed
 
-      ... on CompletedProfile {
-        ...CompletedProfileAddDriverForm
+        ... on CompletedProfile {
+          ...CompletedProfileAddDriverForm
+        }
       }
     }
   }

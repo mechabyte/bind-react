@@ -3,14 +3,16 @@ import COMPLETED_PROFILE_UPDATE_FORM_FRAGMENT from '../fragments/completed-profi
 
 const COMPLETED_PROFILE_UPDATE_QUERY = gql`
 query GetCompletedProfileUpdate($externalId:ID!) {
-  embeddedAccount(externalId:$externalId){
+  account(externalId:$externalId){
     id
-    profile {
-      id
-      completed
+    ... on ConsentedAccount {
+      profile {
+        id
+        completed
 
-      ... on CompletedProfile {
-        ...CompletedProfileUpdateForm
+        ... on CompletedProfile {
+          ...CompletedProfileUpdateForm
+        }
       }
     }
   }

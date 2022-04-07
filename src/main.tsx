@@ -74,6 +74,7 @@ render(
         {({ externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateProfile, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
             <EmbeddedApp externalId={externalId}>
               {({ data, loading, error, removeDriver, removeVehicle }) => {
+                console.log(data);
                 if (error) {
                   return (
                     <h2>{error.message}</h2>
@@ -84,134 +85,139 @@ render(
                     <h2>Loading...</h2>
                   )
                 }
-                if (data?.embeddedAccount?.profile?.__typename === 'IncompleteProfile') {
-                  return (
-                    <IncompleteProfileForm externalUserId={externalId} incompleteProfile={data.embeddedAccount.profile} />
-                  )
+                if (data?.account?.__typename === 'UnconsentedAccount') {
+                  return (<h3>No consent</h3>)
                 }
-                if (data?.embeddedAccount?.profile?.__typename === 'CompletedProfile') {
-                  return (
-                    <>
-                      <p>
-                      <Button size="xs" onClick={() => setDisplayUpdateProfile(true)}>
-                        EDIT PROFILE
-                      </Button>
-                      </p>
-                      <p>
-                        <h4>Drivers:</h4>
-                          {
-                            data.embeddedAccount.profile.drivers.map((driver) => 
-                            <Group position="left" key={driver.id}>
-                              <Text onClick={() => setDisplayEditDriver(driver)}>{driver.firstName} {driver.lastName}</Text>
-                              <CloseButton title="Remove driver" size="xl" iconSize={20} onClick={() => removeDriver({ driverId: driver.id, externalUserId: externalId, attemptPrefill: true })} />
-                            </Group>
-                            )
-                          }
-                         <Button size="xs" onClick={() => setDisplayAddDriver(true)}>
-                          ADD
+                if (data?.account?.__typename === 'ConsentedAccount') {
+                  if (data?.account?.profile?.__typename === 'IncompleteProfile') {
+                    return (
+                      <IncompleteProfileForm externalId={externalId} incompleteProfile={data.account.profile} />
+                    )
+                  }
+                  if (data?.account?.profile?.__typename === 'CompletedProfile') {
+                    return (
+                      <>
+                        <p>
+                        <Button size="xs" onClick={() => setDisplayUpdateProfile(true)}>
+                          EDIT PROFILE
                         </Button>
-                      </p>
-                      <p>
-                        <h4>Vehicles:</h4>
-                          {
-                            data.embeddedAccount.profile.vehicles.map((vehicle) => 
-                            <Group position="left" key={vehicle.id}>
-                              <Text onClick={() => setDisplayEditVehicle(vehicle)}>{vehicle.year} {vehicle.make} {vehicle.model}</Text>
-                              <CloseButton title="Remove vehicle" size="xl" iconSize={20} onClick={() => removeVehicle({ additionalVehicleId: vehicle.id, externalUserId: externalId, attemptPrefill: true })} />
-                            </Group>
+                        </p>
+                        <p>
+                          <h4>Drivers:</h4>
+                            {
+                              data.account.profile.drivers.map((driver) => 
+                              <Group position="left" key={driver.id}>
+                                <Text onClick={() => setDisplayEditDriver(driver)}>{driver.firstName} {driver.lastName}</Text>
+                                <CloseButton title="Remove driver" size="xl" iconSize={20} onClick={() => removeDriver({ driverId: driver.id, externalId, attemptQuote: true })} />
+                              </Group>
+                              )
+                            }
+                           <Button size="xs" onClick={() => setDisplayAddDriver(true)}>
+                            ADD
+                          </Button>
+                        </p>
+                        <p>
+                          <h4>Vehicles:</h4>
+                            {
+                              data.account.profile.vehicles.map((vehicle) => 
+                              <Group position="left" key={vehicle.id}>
+                                <Text onClick={() => setDisplayEditVehicle(vehicle)}>{vehicle.year} {vehicle.make} {vehicle.model}</Text>
+                                <CloseButton title="Remove vehicle" size="xl" iconSize={20} onClick={() => removeVehicle({ additionalVehicleId: vehicle.id, externalId, attemptQuote: true })} />
+                              </Group>
+                              )
+                            }
+                          <Button size="xs" onClick={() => setDisplayAddVehicle(true)}>
+                            ADD
+                          </Button>
+                        </p>
+                        <CompletedProfileUpdateForm attemptQuote externalId={externalId}>
+                          {({ inputs, title, updateProfile, updatingProfile }) => {
+                            const onSubmitForm = (input: ProfileInput) => {
+                              updateProfile(input).then(() => setDisplayUpdateProfile(false))
+                            }
+                            return (
+                              <Modal
+                                opened={displayUpdateProfile}
+                                onClose={() => setDisplayUpdateProfile(false)}
+                                title={title}
+                              >
+                              <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={updatingProfile} />
+                              </Modal>
+                            )}}
+                        </CompletedProfileUpdateForm>
+                        {
+                          displayEditDriver && <CompletedProfileEditDriverForm externalId={externalId} driver={displayEditDriver}>
+                            {({ inputs, title, editDriver, editingDriver }) => {
+                            const onSubmitForm = (input: DriverInput) => {
+                              editDriver(input).then(() => setDisplayEditDriver(undefined))
+                            }
+                            return (
+                              <Modal
+                                opened={displayEditDriver !== undefined}
+                                onClose={() => setDisplayEditDriver(undefined)}
+                                title={title}
+                              >
+                                <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={editingDriver} />
+                              </Modal>
                             )
-                          }
-                        <Button size="xs" onClick={() => setDisplayAddVehicle(true)}>
-                          ADD
-                        </Button>
-                      </p>
-                      <CompletedProfileUpdateForm attemptPrefill={false} externalUserId={externalId}>
-                        {({ inputs, title, updateProfile, updatingProfile }) => {
-                          const onSubmitForm = (input: ProfileInput) => {
-                            updateProfile(input).then(() => setDisplayUpdateProfile(false))
-                          }
-                          return (
-                            <Modal
-                              opened={displayUpdateProfile}
-                              onClose={() => setDisplayUpdateProfile(false)}
-                              title={title}
-                            >
-                            <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={updatingProfile} />
-                            </Modal>
-                          )}}
-                      </CompletedProfileUpdateForm>
-                      {
-                        displayEditDriver && <CompletedProfileEditDriverForm externalUserId={externalId} driver={displayEditDriver}>
-                          {({ inputs, title, editDriver, editingDriver }) => {
-                          const onSubmitForm = (input: DriverInput) => {
-                            editDriver(input).then(() => setDisplayEditDriver(undefined))
-                          }
-                          return (
-                            <Modal
-                              opened={displayEditDriver !== undefined}
-                              onClose={() => setDisplayEditDriver(undefined)}
-                              title={title}
-                            >
-                              <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={editingDriver} />
-                            </Modal>
-                          )
-                        }}
-                        </CompletedProfileEditDriverForm>
-                      }
-                      {
-                        displayEditVehicle && <CompletedProfileEditVehicleForm externalUserId={externalId} vehicle={displayEditVehicle}>
-                          {({ inputs, title, editVehicle, editingVehicle }) => {
-                          const onSubmitForm = (input: AdditionalVehicleInput) => {
-                            editVehicle(input).then(() => setDisplayEditVehicle(undefined))
-                          }
-                          return (
-                            <Modal
-                              opened={displayEditVehicle !== undefined}
-                              onClose={() => setDisplayEditVehicle(undefined)}
-                              title={title}
-                            >
-                              <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={editingVehicle} />
-                            </Modal>
-                          )
-                        }}
-                        </CompletedProfileEditVehicleForm>
-                      }
-                      
-                      <CompletedProfileAddDriverForm externalUserId={externalId} profile={data.embeddedAccount.profile}>
-                        {({ inputs, title, addDriver, addingDriver }) => {
-                          const onSubmitForm = (input: DriverInput) => {
-                            addDriver(input).then(() => setDisplayAddDriver(false))
-                          }
-                          return (
-                            <Modal
-                              opened={displayAddDriver}
-                              onClose={() => setDisplayAddDriver(false)}
-                              title={title}
-                            >
-                              <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={addingDriver} />
-                            </Modal>
-                          )
-                        }}
-                      </CompletedProfileAddDriverForm>
-                      <CompletedProfileAddVehicleForm externalUserId={externalId} profile={data.embeddedAccount.profile}>
-                      {({ inputs, title, addVehicle, addingVehicle }) => {
-                        const onSubmitForm = (input: VehicleInput) => {
-                          addVehicle(input).then(() => setDisplayAddVehicle(false))
+                          }}
+                          </CompletedProfileEditDriverForm>
                         }
-                        return (
-                          <Modal
-                            opened={displayAddVehicle}
-                            onClose={() => setDisplayAddVehicle(false)}
-                            title={title}
-                          >
-                            <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={addingVehicle} />
-                          </Modal>
-                        )
-                      }}
-                      </CompletedProfileAddVehicleForm>
-                    </>
-                  )
-                }
+                        {
+                          displayEditVehicle && <CompletedProfileEditVehicleForm externalId={externalId} vehicle={displayEditVehicle}>
+                            {({ inputs, title, editVehicle, editingVehicle }) => {
+                            const onSubmitForm = (input: AdditionalVehicleInput) => {
+                              editVehicle(input).then(() => setDisplayEditVehicle(undefined))
+                            }
+                            return (
+                              <Modal
+                                opened={displayEditVehicle !== undefined}
+                                onClose={() => setDisplayEditVehicle(undefined)}
+                                title={title}
+                              >
+                                <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={editingVehicle} />
+                              </Modal>
+                            )
+                          }}
+                          </CompletedProfileEditVehicleForm>
+                        }
+                        
+                        <CompletedProfileAddDriverForm externalId={externalId} profile={data.account.profile} attemptQuote>
+                          {({ inputs, title, addDriver, addingDriver }) => {
+                            const onSubmitForm = (input: DriverInput) => {
+                              addDriver(input).then(() => setDisplayAddDriver(false))
+                            }
+                            return (
+                              <Modal
+                                opened={displayAddDriver}
+                                onClose={() => setDisplayAddDriver(false)}
+                                title={title}
+                              >
+                                <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={addingDriver} />
+                              </Modal>
+                            )
+                          }}
+                        </CompletedProfileAddDriverForm>
+                        <CompletedProfileAddVehicleForm externalId={externalId} profile={data.account.profile} attemptQuote>
+                        {({ inputs, title, addVehicle, addingVehicle }) => {
+                          const onSubmitForm = (input: VehicleInput) => {
+                            addVehicle(input).then(() => setDisplayAddVehicle(false))
+                          }
+                          return (
+                            <Modal
+                              opened={displayAddVehicle}
+                              onClose={() => setDisplayAddVehicle(false)}
+                              title={title}
+                            >
+                              <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={addingVehicle} />
+                            </Modal>
+                          )
+                        }}
+                        </CompletedProfileAddVehicleForm>
+                      </>
+                    )
+                  }
+                }                
                 return <p>Something went wrong</p>
               }}
             </EmbeddedApp>

@@ -2,18 +2,20 @@ import { gql } from '@apollo/client';
 
 const COMPLETED_PROFILE_REMOVE_VEHICLE_MUTATION = gql`
 mutation CompletedProfileRemoveVehicle(
-  $externalUserId:String!,
+  $externalId:String!,
   $additionalVehicleId:ID!,
-  $attemptPrefill:Boolean!
+  $attemptQuote:Boolean!
 ) {
-  performProfileOperations(input:{externalUserId:$externalUserId,operations:[{removeAdditionalVehicle:{vehicleId:$additionalVehicleId}}],attemptPrefill:$attemptPrefill}) {
+  performProfileOperations(input:{externalId:$externalId,operations:[{removeAdditionalVehicle:{vehicleId:$additionalVehicleId}}],attemptQuote:$attemptQuote}) {
     errors
-    embeddedAccount {
-      profile {
-        id
-        completed
-        vehicles {
+    account {
+      ... on ConsentedAccount {
+        profile {
           id
+          completed
+          vehicles {
+            id
+          }
         }
       }
     }

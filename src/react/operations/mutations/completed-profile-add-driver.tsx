@@ -3,18 +3,20 @@ import COMPLETED_PROFILE_ADD_DRIVER_FORM_FRAGMENT from '../fragments/completed-p
 
 const COMPLETED_PROFILE_ADD_DRIVER_MUTATION = gql`
 mutation CompletedProfileAddDriver(
-  $externalUserId:String!,
+  $externalId:String!,
   $input:DriverInput!,
-  $attemptPrefill:Boolean!
+  $attemptQuote:Boolean!
 ) {
-  performProfileOperations(input:{externalUserId:$externalUserId,operations:[{addDriver:$input}],attemptPrefill:$attemptPrefill}) {
+  performProfileOperations(input:{externalId:$externalId,operations:[{addDriver:$input}],attemptQuote:$attemptQuote}) {
     errors
-    embeddedAccount {
-      profile {
-        id
-        completed
-        ... on CompletedProfile {
-          ...CompletedProfileAddDriverForm
+    account {
+      ... on ConsentedAccount {
+        profile {
+          id
+          completed
+          ... on CompletedProfile {
+            ...CompletedProfileAddDriverForm
+          }
         }
       }
     }

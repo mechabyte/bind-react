@@ -8,43 +8,46 @@ import INCOMPLETE_PROFILE_REQUIRED_FIELDS_FRAGMENT from '../fragments/incomplete
 
 const EMBEDDED_APP_QUERY = gql`
 query EmbeddedApp($externalId:ID!) {
-  embeddedAccount(externalId:$externalId){
+  account(externalId:$externalId){
     id
-    profile {
-      __typename
-      completed
+    __typename
+    ... on ConsentedAccount {
+      profile {
+        __typename
+        completed
 
-      drivers {
-        id
-        firstName
-        lastName
-        ...CompletedProfileEditDriverForm
-      }
-      mailingAddress {
-        city
-        state
-        zip
-      }
-      vehicles {
-        id
-        make
-        model
-        year
-        ...CompletedProfileEditVehicleForm
-      }
-      
-      ... on IncompleteProfile {
-        ...IncompleteProfileRequiredFields
-      }
-      
-      ... on CompletedProfile {
-        ...CompletedProfileSummary
-        ...CompletedProfileAddDriverForm
-        ...CompletedProfileAddVehicleForm
-        prefilled
-        prefilling
-        rated
-        rating
+        drivers {
+          id
+          firstName
+          lastName
+          ...CompletedProfileEditDriverForm
+        }
+        mailingAddress {
+          city
+          state
+          zip
+        }
+        vehicles {
+          id
+          make
+          model
+          year
+          ...CompletedProfileEditVehicleForm
+        }
+        
+        ... on IncompleteProfile {
+          ...IncompleteProfileRequiredFields
+        }
+        
+        ... on CompletedProfile {
+          ...CompletedProfileSummary
+          ...CompletedProfileAddDriverForm
+          ...CompletedProfileAddVehicleForm
+          prefilled
+          prefilling
+          rated
+          rating
+        }
       }
     }
   }

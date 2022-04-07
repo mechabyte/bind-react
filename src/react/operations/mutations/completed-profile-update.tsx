@@ -3,18 +3,20 @@ import COMPLETED_PROFILE_UPDATE_FORM_FRAGMENT from '../fragments/completed-profi
 
 const COMPLETED_PROFILE_UPDATE_MUTATION = gql`
 mutation CompletedProfileUpdate(
-  $externalUserId:String!,
+  $externalId:String!,
   $input:ProfileInput!,
-  $attemptPrefill:Boolean!
+  $attemptQuote:Boolean!
 ) {
-  performProfileOperations(input:{externalUserId:$externalUserId,operations:[{updateProfile:$input}],attemptPrefill:$attemptPrefill}) {
+  performProfileOperations(input:{externalId:$externalId,operations:[{updateProfile:$input}],attemptQuote:$attemptQuote}) {
     errors
-    embeddedAccount {
-      profile {
-        id
-        completed
-        ... on CompletedProfile {
-          ...CompletedProfileUpdateForm
+    account {
+      ... on ConsentedAccount {
+        profile {
+          id
+          completed
+          ... on CompletedProfile {
+            ...CompletedProfileUpdateForm
+          }
         }
       }
     }

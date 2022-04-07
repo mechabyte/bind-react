@@ -17,19 +17,19 @@ interface EditVehicleCompletedProfileFormRenderProps {
 }
 
 interface EditVehicleCompletedProfileFormProps {
-  attemptPrefill?: boolean;
+  attemptQuote?: boolean;
   children: (props: EditVehicleCompletedProfileFormRenderProps) => JSX.Element;
-  externalUserId: string;
+  externalId: string;
   vehicle: CompletedProfileEditVehicleFormFragment
 }
 
-function EditVehicleCompletedProfileForm({ attemptPrefill, children, externalUserId, vehicle }: EditVehicleCompletedProfileFormProps) {
+function EditVehicleCompletedProfileForm({ attemptQuote, children, externalId, vehicle }: EditVehicleCompletedProfileFormProps) {
   
   const [mutate, { loading: loadingMutation }] = useMutation<CompletedProfileEditVehicleMutation, CompletedProfileEditVehicleMutationVariables>(EDIT_VEHICLE_COMPLETED_PROFILE_MUTATION)
 
   const handleSubmit = useCallback((input: CompletedProfileEditVehicleMutationVariables['input']) => mutate({
-      variables: { externalUserId, input, attemptPrefill: attemptPrefill || false, vehicleId: vehicle.id }
-    }), [attemptPrefill, externalUserId, mutate, vehicle.id]);
+      variables: { externalId, input, attemptQuote: attemptQuote || false, vehicleId: vehicle.id }
+    }), [attemptQuote, externalId, mutate, vehicle.id]);
 
   if (vehicle?.editVehicleForm?.inputs) {
 

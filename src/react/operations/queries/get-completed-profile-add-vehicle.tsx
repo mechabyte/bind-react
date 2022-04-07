@@ -3,14 +3,16 @@ import COMPLETED_PROFILE_ADD_VEHICLE_FORM_FRAGMENT from '../fragments/completed-
 
 const COMPLETED_PROFILE_ADD_VEHICLE_QUERY = gql`
 query GetCompletedProfileAddVehicle($externalId:ID!) {
-  embeddedAccount(externalId:$externalId){
+  account(externalId:$externalId){
     id
-    profile {
-      id
-      completed
+    ... on ConsentedAccount {
+      profile {
+        id
+        completed
 
-      ... on CompletedProfile {
-        ...CompletedProfileAddVehicleForm
+        ... on CompletedProfile {
+          ...CompletedProfileAddVehicleForm
+        }
       }
     }
   }

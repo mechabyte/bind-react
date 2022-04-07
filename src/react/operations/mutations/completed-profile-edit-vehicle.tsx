@@ -3,23 +3,28 @@ import COMPLETED_PROFILE_EDIT_VEHICLE_FORM_FRAGMENT from '../fragments/completed
 
 const COMPLETED_PROFILE_EDIT_VEHICLE_MUTATION = gql`
 mutation CompletedProfileEditVehicle(
-  $externalUserId:String!,
+  $externalId:String!,
   $vehicleId: ID!,
   $input:VehicleInput!,
-  $attemptPrefill:Boolean!
+  $attemptQuote:Boolean!
 ) {
-  performProfileOperations(input:{externalUserId:$externalUserId,operations:[{editAdditionalVehicle:{additionalVehicleId:$vehicleId,updates:$input}}],attemptPrefill:$attemptPrefill}) {
+  performProfileOperations(input:{externalId:$externalId,operations:[{editAdditionalVehicle:{additionalVehicleId:$vehicleId,updates:$input}}],attemptQuote:$attemptQuote}) {
     errors
-    embeddedAccount {
-      profile {
-        id
-        completed
-        vehicles {
+    account {
+      ... on ConsentedAccount {
+        profile {
           id
-          year
-          make
-          model
-          ...CompletedProfileEditVehicleForm
+          completed
+
+          ... on CompletedProfile {
+            vehicles {
+              id
+              year
+              make
+              model
+              ...CompletedProfileEditVehicleForm
+            }
+          }
         }
       }
     }

@@ -8,7 +8,7 @@ import { useMutation } from '@apollo/client';
 import { IncompleteProfileRequiredFieldsFragment, CheckboxFormInput, TextFormInput, SelectFormInput, NumberFormInput, DateFormInput, CompleteProfileMutation, CompleteProfileMutationVariables, CompleteProfileInputObject } from '../../graphql/generated';
 
 interface IncompleteProfileFormProps {
-  externalUserId: string;
+  externalId: string;
   incompleteProfile: IncompleteProfileRequiredFieldsFragment
 }
 
@@ -29,7 +29,7 @@ const fieldValueUtil = ({ __typename, ...restField }: { __typename: string }) =>
   }
 }
 
-function IncompleteProfileForm({ externalUserId, incompleteProfile }: IncompleteProfileFormProps) {
+function IncompleteProfileForm({ externalId, incompleteProfile }: IncompleteProfileFormProps) {
   const initialValues = useMemo(() => {
     if (incompleteProfile.requiredFields) {
       return incompleteProfile.requiredFields.reduce((fields, requiredField) => ({
@@ -49,13 +49,13 @@ function IncompleteProfileForm({ externalUserId, incompleteProfile }: Incomplete
     const { values } = form;
     console.log(`Submitting:`, values);
     completeProfile({ variables: {
-      externalUserId,
+      externalId,
       input: {
         ...values,
         dateOfBirth: values.dateOfBirth.toString(),
       }
     }})
-  }, [form, completeProfile, externalUserId]);
+  }, [form, completeProfile, externalId]);
 
   const handleDateChange = useCallback((fieldName) => (updatedDate: Date) => {
     console.log(fieldName, updatedDate)

@@ -23,26 +23,26 @@ interface UpdateCompletedProfileFormRenderProps {
 }
 
 interface UpdateCompletedProfileFormProps {
-  attemptPrefill?: boolean;
+  attemptQuote?: boolean;
   children: (props: UpdateCompletedProfileFormRenderProps) => JSX.Element;
-  externalUserId: string;
+  externalId: string;
 }
 
-function UpdateCompletedProfileForm({ attemptPrefill, children, externalUserId }: UpdateCompletedProfileFormProps) {
+function UpdateCompletedProfileForm({ attemptQuote, children, externalId }: UpdateCompletedProfileFormProps) {
   
   const {
     data,
     error,
     loading,
-  } = useQuery<GetCompletedProfileUpdateQuery, GetCompletedProfileUpdateQueryVariables>(GET_UPDATE_COMPLETED_PROFILE, { variables: { externalId: externalUserId }});
+  } = useQuery<GetCompletedProfileUpdateQuery, GetCompletedProfileUpdateQueryVariables>(GET_UPDATE_COMPLETED_PROFILE, { variables: { externalId }});
 
   const [mutate, { loading: loadingMutation }] = useMutation<CompletedProfileUpdateMutation, CompletedProfileUpdateMutationVariables>(UPDATE_COMPLETED_PROFILE_MUTATION)
 
   const handleSubmit = useCallback((input: CompletedProfileUpdateMutationVariables['input']) => 
     mutate({
-      variables: { externalUserId, input, attemptPrefill: attemptPrefill || false }
+      variables: { externalId, input, attemptQuote: attemptQuote || false }
     })
-  , [attemptPrefill, externalUserId, mutate]);
+  , [attemptQuote, externalId, mutate]);
 
   if (loading) {
     return null;
@@ -52,12 +52,12 @@ function UpdateCompletedProfileForm({ attemptPrefill, children, externalUserId }
     return null;
   }
 
-  if (data && data.embeddedAccount?.profile.__typename === "CompletedProfile" && data.embeddedAccount?.profile?.form?.inputs) {
+  if (data && data.account?.__typename === "ConsentedAccount" && data.account.profile.__typename === "CompletedProfile" && data.account?.profile?.form?.inputs) {
 
     return children({
       loadingForm: loading,
-      title: data.embeddedAccount?.profile?.form?.title,
-      inputs: data.embeddedAccount?.profile?.form?.inputs,
+      title: data.account?.profile?.form?.title,
+      inputs: data.account?.profile?.form?.inputs,
       updateProfile: handleSubmit,
       updatingProfile: loadingMutation
     });

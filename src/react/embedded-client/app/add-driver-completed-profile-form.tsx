@@ -25,21 +25,21 @@ interface AddDriverCompletedProfileFormRenderProps {
 }
 
 interface AddDriverCompletedProfileFormProps {
-  attemptPrefill?: boolean;
+  attemptQuote?: boolean;
   children: (props: AddDriverCompletedProfileFormRenderProps) => JSX.Element;
-  externalUserId: string;
+  externalId: string;
   profile: CompletedProfileAddDriverFormFragment;
 }
 
-function AddDriverCompletedProfileForm({ attemptPrefill, children, externalUserId, profile }: AddDriverCompletedProfileFormProps) {
+function AddDriverCompletedProfileForm({ attemptQuote, children, externalId, profile }: AddDriverCompletedProfileFormProps) {
   
   const [mutate, { loading: loadingMutation }] = useMutation<CompletedProfileAddDriverMutation, CompletedProfileAddDriverMutationVariables>(ADD_DRIVER_COMPLETED_PROFILE_MUTATION)
 
   const handleSubmit = useCallback((input: CompletedProfileAddDriverMutationVariables['input']) => 
     mutate({
-      variables: { externalUserId, input, attemptPrefill: attemptPrefill || false }
+      variables: { externalId, input, attemptQuote: attemptQuote || false }
     })
-  , [attemptPrefill, externalUserId, mutate]);
+  , [attemptQuote, externalId, mutate]);
 
   if (profile.__typename === "CompletedProfile" && profile?.addDriverForm?.inputs) {
 

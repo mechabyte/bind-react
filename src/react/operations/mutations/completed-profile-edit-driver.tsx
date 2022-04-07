@@ -3,22 +3,26 @@ import COMPLETED_PROFILE_EDIT_DRIVER_FORM_FRAGMENT from '../fragments/completed-
 
 const COMPLETED_PROFILE_EDIT_DRIVER_MUTATION = gql`
 mutation CompletedProfileEditDriver(
-  $externalUserId:String!,
+  $externalId:String!,
   $driverId: ID!,
   $input:DriverInput!,
-  $attemptPrefill:Boolean!
+  $attemptQuote:Boolean!
 ) {
-  performProfileOperations(input:{externalUserId:$externalUserId,operations:[{editDriver:{driverId:$driverId,updates:$input}}],attemptPrefill:$attemptPrefill}) {
+  performProfileOperations(input:{externalId:$externalId,operations:[{editDriver:{driverId:$driverId,updates:$input}}],attemptQuote:$attemptQuote}) {
     errors
-    embeddedAccount {
-      profile {
-        id
-        completed
-        drivers {
+    account {
+      ... on ConsentedAccount {
+        profile {
           id
-          firstName
-          lastName
-          ...CompletedProfileEditDriverForm
+          completed
+          ... on CompletedProfile {
+            drivers {
+              id
+              firstName
+              lastName
+              ...CompletedProfileEditDriverForm
+            }
+          }
         }
       }
     }

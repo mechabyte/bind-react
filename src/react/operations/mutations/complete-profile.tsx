@@ -4,20 +4,22 @@ import INCOMPLETE_PROFILE_REQUIRED_FIELDS_FRAGMENT from '../fragments/incomplete
 
 const COMPLETE_PROFILE_MUTATION = gql`
 mutation CompleteProfile(
-  $externalUserId:String!,
+  $externalId:String!,
   $input:CompleteProfileInputObject!
 ) {
-  completeProfile(input:{externalUserId:$externalUserId,attributes:$input}) {
+  completeProfile(input:{externalId:$externalId,attributes:$input}) {
     errors
     embeddedAccount {
-      profile {
-        completed
-        ... on IncompleteProfile {
-          id
-          ...IncompleteProfileRequiredFields
-        }
-        ... on CompletedProfile {
-          ...CompletedProfileSummary
+      ... on ConsentedAccount {
+        profile {
+          completed
+          ... on IncompleteProfile {
+            id
+            ...IncompleteProfileRequiredFields
+          }
+          ... on CompletedProfile {
+            ...CompletedProfileSummary
+          }
         }
       }
     }

@@ -3,18 +3,20 @@ import COMPLETED_PROFILE_ADD_VEHICLE_FORM_FRAGMENT from '../fragments/completed-
 
 const COMPLETED_PROFILE_ADD_VEHICLE_MUTATION = gql`
 mutation CompletedProfileAddVehicle(
-  $externalUserId:String!,
+  $externalId:String!,
   $input:VehicleInput!,
-  $attemptPrefill:Boolean!
+  $attemptQuote:Boolean!
 ) {
-  performProfileOperations(input:{externalUserId:$externalUserId,operations:[{addVehicle:$input}],attemptPrefill:$attemptPrefill}) {
+  performProfileOperations(input:{externalId:$externalId,operations:[{addVehicle:$input}],attemptQuote:$attemptQuote}) {
     errors
-    embeddedAccount {
-      profile {
-        id
-        completed
-        ... on CompletedProfile {
-          ...CompletedProfileAddVehicleForm
+    account {
+      ... on ConsentedAccount {
+        profile {
+          id
+          completed
+          ... on CompletedProfile {
+            ...CompletedProfileAddVehicleForm
+          }
         }
       }
     }
