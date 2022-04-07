@@ -107,7 +107,7 @@ render(
                           EDIT PROFILE
                         </Button>
                         </p>
-                        <p>
+                        <div>
                           <h4>Address:</h4>
                           <Text>{data.account.profile.mailingAddress?.line1}</Text>
                           <Text>{data.account.profile.mailingAddress?.line2}</Text>
@@ -115,8 +115,8 @@ render(
                           <Button size="xs" onClick={() => setDisplayUpdateMailingAddress(true)}>
                             UPDATE
                           </Button>
-                        </p>
-                        <p>
+                        </div>
+                        <div>
                           <h4>Drivers:</h4>
                             {
                               data.account.profile.drivers.map((driver) => 
@@ -129,8 +129,8 @@ render(
                            <Button size="xs" onClick={() => setDisplayAddDriver(true)}>
                             ADD
                           </Button>
-                        </p>
-                        <p>
+                        </div>
+                        <div>
                           <h4>Vehicles:</h4>
                             {
                               data.account.profile.vehicles.map((vehicle) => 
@@ -143,7 +143,7 @@ render(
                           <Button size="xs" onClick={() => setDisplayAddVehicle(true)}>
                             ADD
                           </Button>
-                        </p>
+                        </div>
                         <CompletedProfileUpdateForm attemptQuote externalId={externalId}>
                           {({ inputs, title, updateProfile, updatingProfile }) => {
                             const onSubmitForm = (input: ProfileInput) => {
