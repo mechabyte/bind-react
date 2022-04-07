@@ -23,6 +23,9 @@ query EmbeddedApp($externalId:ID!) {
           ...CompletedProfileEditDriverForm
         }
         mailingAddress {
+          id
+          line1
+          line2
           city
           state
           zip

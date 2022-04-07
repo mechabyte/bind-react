@@ -3,9 +3,9 @@ import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
 import { TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text } from "@mantine/core"
 import createClient from '@embedded-bind/client';
-import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, FormFields } from '@embedded-bind/react';
+import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, CompletedProfileUpdateMailingAddressForm, FormFields } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
-import { AdditionalVehicleInput, DriverInput, ProfileInput, FormInputTypesFragment, VehicleInput, CompletedProfileEditDriverFormFragment, CompletedProfileEditVehicleFormFragment } from "./react/graphql/generated";
+import { AdditionalVehicleInput, DriverInput, ProfileInput, FormInputTypesFragment, VehicleInput, CompletedProfileEditDriverFormFragment, CompletedProfileEditVehicleFormFragment, MailingAddressInput } from "./react/graphql/generated";
 
 const client = createClient({
   headers: {
@@ -25,11 +25,13 @@ function TextInputWrapper({ children }: { children: ({ externalId }: {
   displayAddVehicle: boolean,
   displayEditDriver: CompletedProfileEditDriverFormFragment | undefined,
   displayEditVehicle: CompletedProfileEditVehicleFormFragment | undefined,
+  displayUpdateMailingAddress: boolean,
   displayUpdateProfile: boolean,
   setDisplayAddDriver: (isAddingDriver: boolean) => void
   setDisplayAddVehicle: (isAddingVehicle: boolean) => void,
   setDisplayEditDriver: (driver: CompletedProfileEditDriverFormFragment | undefined) => void
   setDisplayEditVehicle: (vehicle: CompletedProfileEditVehicleFormFragment | undefined) => void,
+  setDisplayUpdateMailingAddress: (isUpdatingMailingAddress: boolean) => void,
   setDisplayUpdateProfile: (isUpdatingProfile: boolean) => void,
 }) => JSX.Element}) {
   const [value, setValue] = useState('cedd77bc-fbe4-4484-a46b-8c7c5bd3dffb');
@@ -38,6 +40,7 @@ function TextInputWrapper({ children }: { children: ({ externalId }: {
   const [addingVehicle, setAddingVehicle] = useState(false);
   const [editingDriver, setEditingDriver] = useState<CompletedProfileEditDriverFormFragment | undefined>(undefined);
   const [editingVehicle, setEditingVehicle] = useState<CompletedProfileEditVehicleFormFragment | undefined>(undefined);
+  const [updatingMailingAddress, setUpdatingMailingAddress] = useState(false);
   const [updatingProfile, setUpdatingProfile] = useState(false);
 
   const handleChange = useCallback((event) => setValue(event.target.value), [setValue])
@@ -59,6 +62,8 @@ function TextInputWrapper({ children }: { children: ({ externalId }: {
             setDisplayEditDriver: setEditingDriver,
             setDisplayEditVehicle: setEditingVehicle,
             displayUpdateProfile: updatingProfile,
+            displayUpdateMailingAddress: updatingMailingAddress,
+            setDisplayUpdateMailingAddress: setUpdatingMailingAddress,
             setDisplayUpdateProfile: setUpdatingProfile
           }
         )
@@ -71,7 +76,7 @@ render(
   <StrictMode>
     <EmbeddedClientProvider client={client}>
       <TextInputWrapper>
-        {({ externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateProfile, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
+        {({ externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateMailingAddress, displayUpdateProfile, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateMailingAddress, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
             <EmbeddedApp externalId={externalId}>
               {({ data, loading, error, removeDriver, removeVehicle }) => {
                 console.log(data);
@@ -101,6 +106,15 @@ render(
                         <Button size="xs" onClick={() => setDisplayUpdateProfile(true)}>
                           EDIT PROFILE
                         </Button>
+                        </p>
+                        <p>
+                          <h4>Address:</h4>
+                          <Text>{data.account.profile.mailingAddress?.line1}</Text>
+                          <Text>{data.account.profile.mailingAddress?.line2}</Text>
+                          <Text>{`${data.account.profile.mailingAddress?.city}, ${data.account.profile.mailingAddress?.state} ${data.account.profile.mailingAddress?.zip}`}</Text>
+                          <Button size="xs" onClick={() => setDisplayUpdateMailingAddress(true)}>
+                            UPDATE
+                          </Button>
                         </p>
                         <p>
                           <h4>Drivers:</h4>
@@ -145,6 +159,21 @@ render(
                               </Modal>
                             )}}
                         </CompletedProfileUpdateForm>
+                        <CompletedProfileUpdateMailingAddressForm attemptQuote externalId={externalId}>
+                          {({ inputs, title, updateMailingAddress, updatingMailingAddress }) => {
+                            const onSubmitForm = (input: MailingAddressInput) => {
+                              updateMailingAddress(input).then(() => setDisplayUpdateMailingAddress(false))
+                            }
+                            return (
+                              <Modal
+                                opened={displayUpdateMailingAddress}
+                                onClose={() => setDisplayUpdateMailingAddress(false)}
+                                title={title}
+                              >
+                              <FormFields inputs={inputs as FormInputTypesFragment[]} onSubmit={onSubmitForm} submitting={updatingMailingAddress} />
+                              </Modal>
+                            )}}
+                        </CompletedProfileUpdateMailingAddressForm>
                         {
                           displayEditDriver && <CompletedProfileEditDriverForm externalId={externalId} driver={displayEditDriver}>
                             {({ inputs, title, editDriver, editingDriver }) => {

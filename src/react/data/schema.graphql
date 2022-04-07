@@ -318,6 +318,10 @@ interface FormInput {
   required: Boolean
 }
 
+enum FormMailingAddressOperation {
+  UPDATE_MAILING_ADDRESS
+}
+
 enum Gender {
   F
   M
@@ -393,6 +397,7 @@ type InsuredProfile implements Node & Profile {
 
 type MailingAddress implements Node {
   city: String
+  form(operation: FormMailingAddressOperation!): Form
   id: ID!
   line1: String
   line2: String
@@ -414,19 +419,22 @@ type MailingAddress implements Node {
 
 """Attributes for a mailing address"""
 input MailingAddressInput {
-  """Address city"""
+  """Mailing Address address1"""
+  address1: String
+
+  """Mailing Address address2"""
+  address2: String
+
+  """Mailing Address city"""
   city: String
 
-  """Address line one"""
-  line1: String
+  """Mailing Address municipality"""
+  municipality: String
 
-  """Address line two"""
-  line2: String
+  """Mailing Address state"""
+  state: String
 
-  """Address state"""
-  state: Market
-
-  """Address zip"""
+  """Mailing Address zip"""
   zip: String
 }
 
