@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
-import { TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text } from "@mantine/core"
+import { TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text, Checkbox } from "@mantine/core"
 import createClient from '@embedded-bind/client';
 import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, CompletedProfileUpdateMailingAddressForm, FormFields } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
@@ -13,13 +13,10 @@ const client = createClient({
   },
   uri: 'http://localhost:3000/bind_api/web/graphql',
   cache: new InMemoryCache()
-})
+});
 
-export interface IHelloWorld {
-  helloworld: string;
-}
-
-function TextInputWrapper({ children }: { children: ({ externalId }: {
+function DemoWrapper({ children }: { children: ({ externalId }: {
+  automaticQuoting: boolean,
   externalId: string,
   displayAddDriver: boolean,
   displayAddVehicle: boolean,
@@ -38,10 +35,13 @@ function TextInputWrapper({ children }: { children: ({ externalId }: {
 
   const [addingDriver, setAddingDriver] = useState(false);
   const [addingVehicle, setAddingVehicle] = useState(false);
+  const [automaticQuoting, setAutomaticQuoting] = useState(true);
   const [editingDriver, setEditingDriver] = useState<CompletedProfileEditDriverFormFragment | undefined>(undefined);
   const [editingVehicle, setEditingVehicle] = useState<CompletedProfileEditVehicleFormFragment | undefined>(undefined);
   const [updatingMailingAddress, setUpdatingMailingAddress] = useState(false);
   const [updatingProfile, setUpdatingProfile] = useState(false);
+
+  const toggleAutomaticQuoting = useCallback(() => setAutomaticQuoting((enabled) => !enabled), [setAutomaticQuoting]);
 
   const handleChange = useCallback((event) => setValue(event.target.value), [setValue])
 
@@ -49,9 +49,11 @@ function TextInputWrapper({ children }: { children: ({ externalId }: {
   return (
     <>
       <BaseTextInput label="Query embedded API for a specified user" value={value} onChange={handleChange} />
+      <Checkbox checked={automaticQuoting} onClick={toggleAutomaticQuoting} label="Rerate on change" />
       {
         children(
           {
+            automaticQuoting,
             displayAddDriver: addingDriver,
             displayEditDriver: editingDriver,
             displayEditVehicle: editingVehicle,
@@ -64,7 +66,7 @@ function TextInputWrapper({ children }: { children: ({ externalId }: {
             displayUpdateProfile: updatingProfile,
             displayUpdateMailingAddress: updatingMailingAddress,
             setDisplayUpdateMailingAddress: setUpdatingMailingAddress,
-            setDisplayUpdateProfile: setUpdatingProfile
+            setDisplayUpdateProfile: setUpdatingProfile,
           }
         )
       }
@@ -75,11 +77,10 @@ function TextInputWrapper({ children }: { children: ({ externalId }: {
 render(
   <StrictMode>
     <EmbeddedClientProvider client={client}>
-      <TextInputWrapper>
-        {({ externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateMailingAddress, displayUpdateProfile, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateMailingAddress, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
+      <DemoWrapper>
+        {({ automaticQuoting, externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateMailingAddress, displayUpdateProfile, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateMailingAddress, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
             <EmbeddedApp externalId={externalId}>
               {({ data, loading, error, removeDriver, removeVehicle }) => {
-                console.log(data);
                 if (error) {
                   return (
                     <h2>{error.message}</h2>
@@ -144,7 +145,7 @@ render(
                             ADD
                           </Button>
                         </div>
-                        <CompletedProfileUpdateForm attemptQuote externalId={externalId}>
+                        <CompletedProfileUpdateForm attemptQuote={automaticQuoting} externalId={externalId}>
                           {({ inputs, title, updateProfile, updatingProfile }) => {
                             const onSubmitForm = (input: ProfileInput) => {
                               updateProfile(input).then(() => setDisplayUpdateProfile(false))
@@ -159,7 +160,7 @@ render(
                               </Modal>
                             )}}
                         </CompletedProfileUpdateForm>
-                        <CompletedProfileUpdateMailingAddressForm attemptQuote externalId={externalId}>
+                        <CompletedProfileUpdateMailingAddressForm attemptQuote={automaticQuoting} externalId={externalId}>
                           {({ inputs, title, updateMailingAddress, updatingMailingAddress }) => {
                             const onSubmitForm = (input: MailingAddressInput) => {
                               updateMailingAddress(input).then(() => setDisplayUpdateMailingAddress(false))
@@ -175,7 +176,7 @@ render(
                             )}}
                         </CompletedProfileUpdateMailingAddressForm>
                         {
-                          displayEditDriver && <CompletedProfileEditDriverForm externalId={externalId} driver={displayEditDriver}>
+                          displayEditDriver && <CompletedProfileEditDriverForm attemptQuote={automaticQuoting} externalId={externalId} driver={displayEditDriver}>
                             {({ inputs, title, editDriver, editingDriver }) => {
                             const onSubmitForm = (input: DriverInput) => {
                               editDriver(input).then(() => setDisplayEditDriver(undefined))
@@ -193,7 +194,7 @@ render(
                           </CompletedProfileEditDriverForm>
                         }
                         {
-                          displayEditVehicle && <CompletedProfileEditVehicleForm externalId={externalId} vehicle={displayEditVehicle}>
+                          displayEditVehicle && <CompletedProfileEditVehicleForm attemptQuote={automaticQuoting} externalId={externalId} vehicle={displayEditVehicle}>
                             {({ inputs, title, editVehicle, editingVehicle }) => {
                             const onSubmitForm = (input: AdditionalVehicleInput) => {
                               editVehicle(input).then(() => setDisplayEditVehicle(undefined))
@@ -211,7 +212,7 @@ render(
                           </CompletedProfileEditVehicleForm>
                         }
                         
-                        <CompletedProfileAddDriverForm externalId={externalId} profile={data.account.profile} attemptQuote>
+                        <CompletedProfileAddDriverForm externalId={externalId} profile={data.account.profile} attemptQuote={automaticQuoting}>
                           {({ inputs, title, addDriver, addingDriver }) => {
                             const onSubmitForm = (input: DriverInput) => {
                               addDriver(input).then(() => setDisplayAddDriver(false))
@@ -227,7 +228,7 @@ render(
                             )
                           }}
                         </CompletedProfileAddDriverForm>
-                        <CompletedProfileAddVehicleForm externalId={externalId} profile={data.account.profile} attemptQuote>
+                        <CompletedProfileAddVehicleForm externalId={externalId} profile={data.account.profile} attemptQuote={automaticQuoting}>
                         {({ inputs, title, addVehicle, addingVehicle }) => {
                           const onSubmitForm = (input: VehicleInput) => {
                             addVehicle(input).then(() => setDisplayAddVehicle(false))
@@ -251,7 +252,7 @@ render(
               }}
             </EmbeddedApp>
           )}
-      </TextInputWrapper>
+      </DemoWrapper>
     </EmbeddedClientProvider>
   </StrictMode>,
   document.getElementById("root")
