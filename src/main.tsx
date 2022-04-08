@@ -100,7 +100,7 @@ render(
                       <IncompleteProfileForm externalId={externalId} incompleteProfile={data.account.profile} />
                     )
                   }
-                  if (data?.account?.profile?.__typename === 'CompletedProfile') {
+                  if (['CompletedProfile', 'RatedProfile'].includes(data?.account?.profile?.__typename)) {
                     return (
                       <>
                         <p>

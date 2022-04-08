@@ -862,6 +862,35 @@ type Rate implements Node {
   quotes(tiers: [QuoteTier!]!): [Quote!]!
 }
 
+type RatedProfile implements Node & Profile {
+  completed: Boolean!
+  declined: Boolean
+  drivers: [Driver!]!
+  form(operation: ProfileFormOperation!): Form
+  id: ID!
+  mailingAddress: MailingAddress!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  policy: Policy
+  prefilled: Boolean!
+  prefilling: Boolean!
+  quoteCheckout(billingCycle: BillingCycle!, selectedQuoteId: ID!): QuoteCheckout
+  rate: RatingRequest
+  rated: Boolean!
+  rating: Boolean
+  vehicles: [Vehicle!]!
+}
+
 type RatingRequest implements Node {
   id: ID!
 
