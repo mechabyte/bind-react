@@ -46,10 +46,6 @@ query EmbeddedApp($externalId:ID!) {
           ...CompletedProfileSummary
           ...CompletedProfileAddDriverForm
           ...CompletedProfileAddVehicleForm
-          prefilled
-          prefilling
-          rated
-          rating
         }
       }
     }
