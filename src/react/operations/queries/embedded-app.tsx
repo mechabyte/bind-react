@@ -7,7 +7,7 @@ import COMPLETED_PROFILE_EDIT_VEHICLE_FRAGMENT from '../fragments/completed-prof
 import INCOMPLETE_PROFILE_REQUIRED_FIELDS_FRAGMENT from '../fragments/incomplete-profile-required-fields';
 
 const EMBEDDED_APP_QUERY = gql`
-query EmbeddedApp($externalId:ID!) {
+query EmbeddedApp($externalId:ID!, $billingCycle:BillingCycle!) {
   account(externalId:$externalId){
     id
     __typename
@@ -46,6 +46,32 @@ query EmbeddedApp($externalId:ID!) {
           ...CompletedProfileSummary
           ...CompletedProfileAddDriverForm
           ...CompletedProfileAddVehicleForm
+        }
+
+        ... on RatedProfile {
+          rate {
+            __typename
+            ... on BindableRate {
+              quotes {
+                id
+                billingAmount(billingCycle:$billingCycle) {
+                  cents
+                  dollars
+                }
+                tier
+              }
+            }
+            ... on StaleRate {
+              quotes {
+                id
+                billingAmount(billingCycle:$billingCycle) {
+                  cents
+                  dollars
+                }
+                tier
+              }
+            }
+          }
         }
       }
     }

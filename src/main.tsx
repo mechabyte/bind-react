@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
-import { TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text, Checkbox } from "@mantine/core"
+import { TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text, Checkbox, Select } from "@mantine/core"
 import createClient from '@embedded-bind/client';
 import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, CompletedProfileUpdateMailingAddressForm, FormFields } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
-import { AdditionalVehicleInput, DriverInput, ProfileInput, FormInputTypesFragment, VehicleInput, CompletedProfileEditDriverFormFragment, CompletedProfileEditVehicleFormFragment, MailingAddressInput } from "./react/graphql/generated";
+import { BillingCycle, AdditionalVehicleInput, DriverInput, ProfileInput, FormInputTypesFragment, VehicleInput, CompletedProfileEditDriverFormFragment, CompletedProfileEditVehicleFormFragment, MailingAddressInput } from "./react/graphql/generated";
 
 const client = createClient({
   headers: {
@@ -17,6 +17,7 @@ const client = createClient({
 
 function DemoWrapper({ children }: { children: ({ externalId }: {
   automaticQuoting: boolean,
+  billingCycle: BillingCycle,
   externalId: string,
   displayAddDriver: boolean,
   displayAddVehicle: boolean,
@@ -36,6 +37,7 @@ function DemoWrapper({ children }: { children: ({ externalId }: {
   const [addingDriver, setAddingDriver] = useState(false);
   const [addingVehicle, setAddingVehicle] = useState(false);
   const [automaticQuoting, setAutomaticQuoting] = useState(true);
+  const [billingCycle, setBillingCycle] = useState(BillingCycle.Monthly);
   const [editingDriver, setEditingDriver] = useState<CompletedProfileEditDriverFormFragment | undefined>(undefined);
   const [editingVehicle, setEditingVehicle] = useState<CompletedProfileEditVehicleFormFragment | undefined>(undefined);
   const [updatingMailingAddress, setUpdatingMailingAddress] = useState(false);
@@ -50,10 +52,15 @@ function DemoWrapper({ children }: { children: ({ externalId }: {
     <>
       <BaseTextInput label="Query embedded API for a specified user" value={value} onChange={handleChange} />
       <Checkbox checked={automaticQuoting} onClick={toggleAutomaticQuoting} label="Rerate on change" />
+      <Select data={Object.entries(BillingCycle).map(([cycle, cycleValue]) => ({
+        label: cycle,
+        value: cycleValue
+      }))} onChange={(newBillingCycle: BillingCycle) => setBillingCycle(newBillingCycle)} value={billingCycle} />
       {
         children(
           {
             automaticQuoting,
+            billingCycle,
             displayAddDriver: addingDriver,
             displayEditDriver: editingDriver,
             displayEditVehicle: editingVehicle,
@@ -78,8 +85,8 @@ render(
   <StrictMode>
     <EmbeddedClientProvider client={client}>
       <DemoWrapper>
-        {({ automaticQuoting, externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateMailingAddress, displayUpdateProfile, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateMailingAddress, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
-            <EmbeddedApp externalId={externalId}>
+        {({ automaticQuoting, billingCycle, externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateMailingAddress, displayUpdateProfile, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateMailingAddress, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
+            <EmbeddedApp externalId={externalId} billingCycle={billingCycle}>
               {({ data, loading, error, removeDriver, removeVehicle }) => {
                 if (error) {
                   return (
@@ -100,7 +107,7 @@ render(
                       <IncompleteProfileForm externalId={externalId} incompleteProfile={data.account.profile} />
                     )
                   }
-                  if (['CompletedProfile', 'RatedProfile'].includes(data?.account?.profile?.__typename)) {
+                  if ((data?.account?.profile?.__typename === "CompletedProfile") || (data?.account?.profile?.__typename === "RatedProfile")) {
                     return (
                       <>
                         <p>
@@ -145,6 +152,18 @@ render(
                             ADD
                           </Button>
                         </div>
+                        {
+                          data.account.profile.__typename === "RatedProfile" &&
+                          <div>
+                            <h1>THIS PROFILE HAS BEEN RATED</h1>
+                            <code>
+                              {JSON.stringify(data.account.profile.rate.quotes)}
+                            </code>
+                          </div>
+                        }
+
+
+
                         <CompletedProfileUpdateForm attemptQuote={automaticQuoting} externalId={externalId}>
                           {({ inputs, title, updateProfile, updatingProfile }) => {
                             const onSubmitForm = (input: ProfileInput) => {
@@ -248,6 +267,7 @@ render(
                     )
                   }
                 }                
+                console.log(data);
                 return <p>Something went wrong</p>
               }}
             </EmbeddedApp>

@@ -9,6 +9,41 @@ input AdditionalVehicleInput {
   vin: String!
 }
 
+type BillingAmount {
+  cents: Int!
+  dollars: Int!
+  fullPrice: BillingAmountFullPrice!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+}
+
+type BillingAmountFullPrice {
+  cents: Int!
+  dollars: Float!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+}
+
 enum BillingCycle {
   """Full Term"""
   full_term
@@ -32,6 +67,7 @@ type BindableRate implements Node & Rate {
     """IDs of the objects."""
     ids: [ID!]!
   ): [Node]!
+  quotes: [Quote!]!
 }
 
 """An insurance rate which was calculated"""
@@ -169,7 +205,7 @@ type CompletedProfile implements Node & Profile {
     """IDs of the objects."""
     ids: [ID!]!
   ): [Node]!
-  rate: EstimatedRate
+  rate: EstimatedRate!
   vehicles: [Vehicle!]!
 }
 
@@ -311,6 +347,7 @@ type EstimatedRate implements Node & Rate {
     """IDs of the objects."""
     ids: [ID!]!
   ): [Node]!
+  quotes: [Quote!]!
 }
 
 type Form {
@@ -383,6 +420,7 @@ type IncompleteProfile implements Node & Profile {
     """IDs of the objects."""
     ids: [ID!]!
   ): [Node]!
+  rate: EstimatedRate!
   requiredFields(excludeSubmitted: Boolean = false): [FormInput!]
   vehicles: [Vehicle!]!
 }
@@ -801,6 +839,24 @@ type Query {
   viewer: Account
 }
 
+type Quote implements Node {
+  billingAmount(billingCycle: BillingCycle!): BillingAmount
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  tier: QuoteTier!
+}
+
 type QuoteCheckout implements Node {
   id: ID!
 
@@ -818,9 +874,33 @@ type QuoteCheckout implements Node {
   price: Int!
 }
 
+enum QuoteTier {
+  """Custom coverage"""
+  custom
+
+  """High coverage"""
+  high
+
+  """Low coverage"""
+  low
+
+  """Matched coverage"""
+  rate_call_1_match
+
+  """Recommended tier"""
+  recommended
+
+  """Right quote coverage"""
+  right_quote
+
+  """State minimum coverage"""
+  state_minimum
+}
+
 """An object with an ID."""
 interface Rate implements Node {
   id: ID!
+  quotes: [Quote!]!
 }
 
 type RatedProfile implements Node & Profile {
@@ -916,6 +996,7 @@ type StaleRate implements Node & Rate {
     """IDs of the objects."""
     ids: [ID!]!
   ): [Node]!
+  quotes: [Quote!]!
 }
 
 type TextFormInput implements FormInput {
