@@ -358,7 +358,12 @@ render(
                       </>
                     )
                   }
-                }                
+                }
+                if (data?.account?.__typename === "PolicyholderAccount") {
+                  return (
+                    <Title order={2}>Purchased!</Title>
+                  )
+                }           
                 console.log(data);
                 return <p>Something went wrong</p>
               }}
