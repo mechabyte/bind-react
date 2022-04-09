@@ -4,6 +4,8 @@ export { default as NumberInput } from '@embedded-bind/react/components/inputs/n
 export { default as Select } from '@embedded-bind/react/components/inputs/select';
 export { default as TextInput } from '@embedded-bind/react/components/inputs/text-input';
 
+export { default as BraintreeClient } from '@embedded-bind/react/embedded-client/app/braintree-client';
+
 export { default as EmbeddedApp } from '@embedded-bind/react/embedded-client/app/app';
 export { default as QuoteCheckout } from '@embedded-bind/react/embedded-client/app/quote-checkout';
 export { default as IncompleteProfileForm } from '@embedded-bind/react/embedded-client/app/incomplete-profile-form';

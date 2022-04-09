@@ -3,7 +3,7 @@ import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
 import { Card, Badge, TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text, Checkbox, Select, useMantineTheme, Title } from "@mantine/core"
 import createClient from '@embedded-bind/client';
-import { EmbeddedApp, EmbeddedClientProvider, QuoteCheckout, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, CompletedProfileUpdateMailingAddressForm, FormFields } from '@embedded-bind/react';
+import { BraintreeClient, EmbeddedApp, EmbeddedClientProvider, QuoteCheckout, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, CompletedProfileUpdateMailingAddressForm, FormFields } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
 import { QuoteTier, BillingCycle, AdditionalVehicleInput, DriverInput, ProfileInput, FormInputTypesFragment, VehicleInput, CompletedProfileEditDriverFormFragment, CompletedProfileEditVehicleFormFragment, MailingAddressInput } from "./react/graphql/generated";
 
@@ -322,6 +322,10 @@ render(
                                   <Title order={4}>{checkoutData.account.profile.quoteCheckout?.affirmationStatement.title}</Title>
                                   <Text>{checkoutData.account.profile.quoteCheckout?.affirmationStatement.statement}</Text>
                                   <code>{checkoutData.account.profile.quoteCheckout?.clientPaymentAuthorizationToken}</code>
+                                  {
+                                    checkoutData.account.profile.quoteCheckout?.clientPaymentAuthorizationToken &&
+                                    <BraintreeClient onPaymentCompleted={(paymentNonce) => console.log(paymentNonce)} clientPaymentAuthorizationToken={checkoutData.account.profile.quoteCheckout?.clientPaymentAuthorizationToken} />
+                                  } 
                                 </>
                                 );
                               } 
