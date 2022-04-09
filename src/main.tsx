@@ -321,6 +321,7 @@ render(
                                   }
                                   <Title order={4}>{checkoutData.account.profile.quoteCheckout?.affirmationStatement.title}</Title>
                                   <Text>{checkoutData.account.profile.quoteCheckout?.affirmationStatement.statement}</Text>
+                                  <code>{checkoutData.account.profile.quoteCheckout?.clientPaymentAuthorizationToken}</code>
                                 </>
                                 );
                               } 

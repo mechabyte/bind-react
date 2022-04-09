@@ -14,6 +14,8 @@ query QuoteCheckout($externalId:ID!, $billingCycle:BillingCycle!, $selectedQuote
               title
             }
 
+            clientPaymentAuthorizationToken
+
             disclaimers {
               __typename
               id

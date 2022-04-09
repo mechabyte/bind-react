@@ -922,6 +922,7 @@ type Quote implements Node {
 
 type QuoteCheckout {
   affirmationStatement: AffirmationStatement!
+  clientPaymentAuthorizationToken: String!
   disclaimers: [Disclaimer!]!
 
   """Fetches an object given its ID."""

@@ -954,6 +954,7 @@ export type QuoteNodesArgs = {
 export type QuoteCheckout = {
   __typename?: 'QuoteCheckout';
   affirmationStatement: AffirmationStatement;
+  clientPaymentAuthorizationToken: Scalars['String'];
   disclaimers: Array<Disclaimer>;
   /** Fetches an object given its ID. */
   node?: Maybe<Node>;
@@ -1399,4 +1400,4 @@ export type QuoteCheckoutQueryVariables = Exact<{
 }>;
 
 
-export type QuoteCheckoutQuery = { __typename?: 'Query', account?: { __typename: 'ConsentedAccount', id: string, profile: { __typename?: 'CompletedProfile' } | { __typename?: 'IncompleteProfile' } | { __typename?: 'InsuredProfile' } | { __typename?: 'RatedProfile', quoteCheckout?: { __typename?: 'QuoteCheckout', affirmationStatement: { __typename?: 'AffirmationStatement', statement: string, title: string }, disclaimers: Array<{ __typename: 'GeneratedDisclaimer', url: string, id: string, name: string } | { __typename: 'GeneratingDisclaimer', id: string, name: string }> } | null } } | { __typename: 'PolicyholderAccount', id: string } | { __typename: 'UnconsentedAccount', id: string } | null };
+export type QuoteCheckoutQuery = { __typename?: 'Query', account?: { __typename: 'ConsentedAccount', id: string, profile: { __typename?: 'CompletedProfile' } | { __typename?: 'IncompleteProfile' } | { __typename?: 'InsuredProfile' } | { __typename?: 'RatedProfile', quoteCheckout?: { __typename?: 'QuoteCheckout', clientPaymentAuthorizationToken: string, affirmationStatement: { __typename?: 'AffirmationStatement', statement: string, title: string }, disclaimers: Array<{ __typename: 'GeneratedDisclaimer', url: string, id: string, name: string } | { __typename: 'GeneratingDisclaimer', id: string, name: string }> } | null } } | { __typename: 'PolicyholderAccount', id: string } | { __typename: 'UnconsentedAccount', id: string } | null };
