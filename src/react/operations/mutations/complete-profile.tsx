@@ -9,12 +9,13 @@ mutation CompleteProfile(
 ) {
   completeProfile(input:{externalId:$externalId,attributes:$input}) {
     errors
-    embeddedAccount {
+    account {
+      id
       ... on ConsentedAccount {
         profile {
+          id
           completed
           ... on IncompleteProfile {
-            id
             ...IncompleteProfileRequiredFields
           }
           ... on CompletedProfile {

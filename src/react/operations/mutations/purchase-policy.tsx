@@ -8,8 +8,8 @@ mutation PurchasePolicy(
     errors
     purchased
     account {
-      __typename
       id
+      __typename
     }
   }
 }

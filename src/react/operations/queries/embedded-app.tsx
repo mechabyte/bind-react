@@ -5,6 +5,7 @@ import COMPLETED_PROFILE_ADD_VEHICLE_FRAGMENT from '../fragments/completed-profi
 import COMPLETED_PROFILE_EDIT_DRIVER_FRAGMENT from '../fragments/completed-profile-edit-driver-form';
 import COMPLETED_PROFILE_EDIT_VEHICLE_FRAGMENT from '../fragments/completed-profile-edit-vehicle-form';
 import INCOMPLETE_PROFILE_REQUIRED_FIELDS_FRAGMENT from '../fragments/incomplete-profile-required-fields';
+import POLICYHOLDER_ACCOUNT_POLICY_FRAGMENT from '../fragments/policyholder-account-policy';
 
 const EMBEDDED_APP_QUERY = gql`
 query EmbeddedApp($externalId:ID!, $billingCycle:BillingCycle!) {
@@ -15,6 +16,7 @@ query EmbeddedApp($externalId:ID!, $billingCycle:BillingCycle!) {
       profile {
         __typename
         completed
+        id
 
         drivers {
           id
@@ -76,25 +78,7 @@ query EmbeddedApp($externalId:ID!, $billingCycle:BillingCycle!) {
       }
     }
     ... on PolicyholderAccount {
-      policy {
-        __typename
-        effectiveDate
-        expirationDate
-        id
-        number
-        partnerBroadcasted
-
-        primaryNamedInsured {
-          id
-          firstName
-          lastName
-        }
-        namedInsureds {
-          id
-          firstName
-          lastName
-        }
-      }
+      ...PolicyholderAccountPolicy
     }
   }
 }
@@ -104,6 +88,7 @@ ${COMPLETED_PROFILE_EDIT_DRIVER_FRAGMENT}
 ${COMPLETED_PROFILE_EDIT_VEHICLE_FRAGMENT}
 ${COMPLETED_PROFILE_SUMMARY_FRAGMENT}
 ${INCOMPLETE_PROFILE_REQUIRED_FIELDS_FRAGMENT}
+${POLICYHOLDER_ACCOUNT_POLICY_FRAGMENT}
 `;
 
 export default EMBEDDED_APP_QUERY;

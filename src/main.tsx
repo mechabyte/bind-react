@@ -35,7 +35,7 @@ function DemoWrapper({ children }: { children: ({ externalId }: {
   setDisplayUpdateMailingAddress: (isUpdatingMailingAddress: boolean) => void,
   setDisplayUpdateProfile: (isUpdatingProfile: boolean) => void,
 }) => JSX.Element}) {
-  const [value, setValue] = useState('cedd77bc-fbe4-4484-a46b-8c7c5bd3dffb');
+  const [value, setValue] = useState('f1637565-4cb3-4f56-9779-1a4e4a8762b8');
 
   const [addingDriver, setAddingDriver] = useState(false);
   const [addingVehicle, setAddingVehicle] = useState(false);
@@ -93,7 +93,7 @@ render(
       <DemoWrapper>
         {({ automaticQuoting, billingCycle, externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateMailingAddress, displayUpdateProfile, selectQuoteId, selectedQuoteId, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateMailingAddress, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
             <EmbeddedApp externalId={externalId} billingCycle={billingCycle}>
-              {({ data, loading, error, removeDriver, removeVehicle }) => {
+              {({ data, loading, error, refetch, removeDriver, removeVehicle }) => {
                 const [policyStartDate, setPolicyStartDate] = useState<Date | null>(null);
                 const theme = useMantineTheme();
                 if (error) {
@@ -101,11 +101,20 @@ render(
                     <h2>{error.message}</h2>
                   )
                 }
-                if (loading) {
+                if (loading && data === undefined) {
                   return (
                     <h2>Loading...</h2>
                   )
                 }
+                if (data?.account?.__typename === "PolicyholderAccount") {
+                  return (
+                    <>
+                      <Title order={2}>Purchased!</Title>
+                      <code>{JSON.stringify(data.account.policy)}</code>
+                    </>
+                  )
+                }
+                
                 if (data?.account?.__typename === 'UnconsentedAccount') {
                   return (<h3>No consent</h3>)
                 }
@@ -335,7 +344,7 @@ render(
                                         paymentMethodNonce,
                                         selectedQuoteId,
                                         startDate: policyStartDate?.toISOString(),
-                                      }}}).then((result) => console.log(result))
+                                      }}}).then(() => refetch({ externalId, billingCycle }))
                                     }} clientPaymentAuthorizationToken={checkoutData.account.profile.quoteCheckout?.clientPaymentAuthorizationToken}>
                                       <DatePicker
                                         placeholder={checkoutData.account.profile.quoteCheckout.policyStartDateInput.placeholder || undefined}
@@ -359,15 +368,7 @@ render(
                     )
                   }
                 }
-                if (data?.account?.__typename === "PolicyholderAccount") {
-                  return (
-                    <>
-                      <Title order={2}>Purchased!</Title>
-                      <code>{JSON.stringify(data.account.policy)}</code>
-                    </>
-                  )
-                }           
-                console.log(data);
+                console.log(data, error);
                 return <p>Something went wrong</p>
               }}
             </EmbeddedApp>
