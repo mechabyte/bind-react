@@ -3,11 +3,13 @@ import { Button } from '@mantine/core'
 import dropin, { Dropin } from "braintree-web-drop-in";
 
 export interface BraintreeClientProps {
+  buttonText?: string;
+  children: JSX.Element;
   clientPaymentAuthorizationToken: string;
   onPaymentCompleted: (paymentMethodNonce: string) => void;
 }
 
-export default function BraintreeClient ({ clientPaymentAuthorizationToken, onPaymentCompleted }: BraintreeClientProps) {
+export default function BraintreeClient ({ buttonText, children, clientPaymentAuthorizationToken, onPaymentCompleted }: BraintreeClientProps) {
 
   const [initialized, setInitialized] = useState(false);
   const [braintreeInstance, setBraintreeInstance] = useState<Dropin | undefined>(undefined);
@@ -38,6 +40,7 @@ export default function BraintreeClient ({ clientPaymentAuthorizationToken, onPa
 
   return (
       <div>
+          {children}
           <div
               id="braintree-drop-in-div"
           />
@@ -58,7 +61,7 @@ export default function BraintreeClient ({ clientPaymentAuthorizationToken, onPa
                   }
               }}
           >
-              Pay
+            {buttonText || "Pay"}
           </Button>
       </div>
   )

@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
+import { DatePicker } from '@mantine/dates'
 import { Card, Badge, TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text, Checkbox, Select, useMantineTheme, Title } from "@mantine/core"
 import createClient from '@embedded-bind/client';
 import { BraintreeClient, EmbeddedApp, EmbeddedClientProvider, QuoteCheckout, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, CompletedProfileUpdateMailingAddressForm, FormFields } from '@embedded-bind/react';
@@ -93,6 +94,7 @@ render(
         {({ automaticQuoting, billingCycle, externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateMailingAddress, displayUpdateProfile, selectQuoteId, selectedQuoteId, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateMailingAddress, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
             <EmbeddedApp externalId={externalId} billingCycle={billingCycle}>
               {({ data, loading, error, removeDriver, removeVehicle }) => {
+                const [policyStartDate, setPolicyStartDate] = useState<Date | null>(null);
                 const theme = useMantineTheme();
                 if (error) {
                   return (
@@ -293,7 +295,7 @@ render(
                         {
                           selectedQuoteId &&
                           <QuoteCheckout externalId={externalId} selectedQuoteId={selectedQuoteId} billingCycle={billingCycle}>
-                            {({ data: checkoutData, loading: loadingCheckout, error: checkoutError }) => {
+                            {({ data: checkoutData, loading: loadingCheckout, error: checkoutError, purchasePolicy }) => {
                               if (checkoutError) {
                                 return (
                                   <h2>{checkoutError.message}</h2>
@@ -305,6 +307,9 @@ render(
                                 )
                               }
                               if (checkoutData?.account?.__typename === "ConsentedAccount" && checkoutData.account.profile.__typename === "RatedProfile") {
+                                if (policyStartDate == null) {
+                                  setPolicyStartDate(new Date(checkoutData.account.profile.quoteCheckout?.policyStartDateInput.selectedDate));
+                                }
                                 return (
                                 <>
                                   <Title order={2}>Documents to review</Title>
@@ -321,11 +326,27 @@ render(
                                   }
                                   <Title order={4}>{checkoutData.account.profile.quoteCheckout?.affirmationStatement.title}</Title>
                                   <Text>{checkoutData.account.profile.quoteCheckout?.affirmationStatement.statement}</Text>
-                                  <code>{checkoutData.account.profile.quoteCheckout?.clientPaymentAuthorizationToken}</code>
                                   {
                                     checkoutData.account.profile.quoteCheckout?.clientPaymentAuthorizationToken &&
-                                    <BraintreeClient onPaymentCompleted={(paymentNonce) => console.log(paymentNonce)} clientPaymentAuthorizationToken={checkoutData.account.profile.quoteCheckout?.clientPaymentAuthorizationToken} />
-                                  } 
+                                    <BraintreeClient buttonText="Agree and Purchase" onPaymentCompleted={(paymentMethodNonce) => {
+                                      purchasePolicy({ variables: { input: {
+                                        billingCycle,
+                                        externalId,
+                                        paymentMethodNonce,
+                                        selectedQuoteId,
+                                        startDate: policyStartDate?.toISOString(),
+                                      }}}).then((result) => console.log(result))
+                                    }} clientPaymentAuthorizationToken={checkoutData.account.profile.quoteCheckout?.clientPaymentAuthorizationToken}>
+                                      <DatePicker
+                                        placeholder={checkoutData.account.profile.quoteCheckout.policyStartDateInput.placeholder || undefined}
+                                        label={checkoutData.account.profile.quoteCheckout.policyStartDateInput.label}
+                                        value={policyStartDate}
+                                        onChange={setPolicyStartDate}
+                                        maxDate={checkoutData.account.profile.quoteCheckout.policyStartDateInput.maxDate ? new Date(checkoutData.account.profile.quoteCheckout.policyStartDateInput.maxDate) : undefined}
+                                        minDate={checkoutData.account.profile.quoteCheckout.policyStartDateInput.minDate ? new Date(checkoutData.account.profile.quoteCheckout.policyStartDateInput.minDate) : undefined}
+                                      />
+                                    </BraintreeClient>
+                                  }
                                 </>
                                 );
                               } 

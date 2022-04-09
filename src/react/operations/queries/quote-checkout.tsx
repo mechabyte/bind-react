@@ -24,6 +24,16 @@ query QuoteCheckout($externalId:ID!, $billingCycle:BillingCycle!, $selectedQuote
                 url
               }
             }
+
+            policyStartDateInput {
+              disabled
+              label
+              maxDate
+              minDate
+              placeholder
+              required
+              selectedDate
+            }
           }
         }
       }
