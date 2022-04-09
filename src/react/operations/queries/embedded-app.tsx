@@ -83,6 +83,17 @@ query EmbeddedApp($externalId:ID!, $billingCycle:BillingCycle!) {
         id
         number
         partnerBroadcasted
+
+        primaryNamedInsured {
+          id
+          firstName
+          lastName
+        }
+        namedInsureds {
+          id
+          firstName
+          lastName
+        }
       }
     }
   }

@@ -7,6 +7,7 @@ type ActivePolicy implements Node & Policy {
   effectiveDate: ISO8601Date!
   expirationDate: ISO8601Date!
   id: ID!
+  namedInsureds: [NamedInsured!]!
 
   """Fetches an object given its ID."""
   node(
@@ -21,6 +22,7 @@ type ActivePolicy implements Node & Policy {
   ): [Node]!
   number: String!
   partnerBroadcasted: Boolean!
+  primaryNamedInsured: NamedInsured!
 }
 
 """Attributes for creating or updating a profile vehicle"""
@@ -400,6 +402,7 @@ type ExpiredPolicy implements Node & Policy {
   effectiveDate: ISO8601Date!
   expirationDate: ISO8601Date!
   id: ID!
+  namedInsureds: [NamedInsured!]!
 
   """Fetches an object given its ID."""
   node(
@@ -414,6 +417,7 @@ type ExpiredPolicy implements Node & Policy {
   ): [Node]!
   number: String!
   partnerBroadcasted: Boolean!
+  primaryNamedInsured: NamedInsured!
 }
 
 type Form {
@@ -458,6 +462,7 @@ type FuturePolicy implements Node & Policy {
   effectiveDate: ISO8601Date!
   expirationDate: ISO8601Date!
   id: ID!
+  namedInsureds: [NamedInsured!]!
 
   """Fetches an object given its ID."""
   node(
@@ -472,6 +477,7 @@ type FuturePolicy implements Node & Policy {
   ): [Node]!
   number: String!
   partnerBroadcasted: Boolean!
+  primaryNamedInsured: NamedInsured!
 }
 
 enum Gender {
@@ -820,6 +826,24 @@ type Mutation {
   ): ReportAccountConsentPayload
 }
 
+type NamedInsured implements Node {
+  firstName: String!
+  id: ID!
+  lastName: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+}
+
 """An object with an ID."""
 interface Node {
   """ID of the object."""
@@ -893,8 +917,10 @@ interface Policy implements Node {
   effectiveDate: ISO8601Date!
   expirationDate: ISO8601Date!
   id: ID!
+  namedInsureds: [NamedInsured!]!
   number: String!
   partnerBroadcasted: Boolean!
+  primaryNamedInsured: NamedInsured!
 }
 
 type PolicyholderAccount implements Account & Node {
