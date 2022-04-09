@@ -3,11 +3,16 @@ import {
   NormalizedCacheObject,
   ApolloProvider,
 } from "@apollo/client";
+import {
+  MantineProvider
+} from "@mantine/core";
 
 function EmbeddedBindProvider({ children, client }: { children: JSX.Element, client: ApolloClient<NormalizedCacheObject> }) {
   return (
     <ApolloProvider client={client}>
-      {children}
+      <MantineProvider>
+        {children}
+      </MantineProvider>
     </ApolloProvider>
   );
 }

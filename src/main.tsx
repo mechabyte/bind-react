@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
-import { TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text, Checkbox, Select } from "@mantine/core"
+import { Card, Badge, TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text, Checkbox, Select, useMantineTheme } from "@mantine/core"
 import createClient from '@embedded-bind/client';
 import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, CompletedProfileUpdateMailingAddressForm, FormFields } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
-import { BillingCycle, AdditionalVehicleInput, DriverInput, ProfileInput, FormInputTypesFragment, VehicleInput, CompletedProfileEditDriverFormFragment, CompletedProfileEditVehicleFormFragment, MailingAddressInput } from "./react/graphql/generated";
+import { QuoteTier, BillingCycle, AdditionalVehicleInput, DriverInput, ProfileInput, FormInputTypesFragment, VehicleInput, CompletedProfileEditDriverFormFragment, CompletedProfileEditVehicleFormFragment, MailingAddressInput } from "./react/graphql/generated";
 
 const client = createClient({
   headers: {
@@ -25,6 +25,8 @@ function DemoWrapper({ children }: { children: ({ externalId }: {
   displayEditVehicle: CompletedProfileEditVehicleFormFragment | undefined,
   displayUpdateMailingAddress: boolean,
   displayUpdateProfile: boolean,
+  selectQuoteId: (quoteId: string) => void,
+  selectedQuoteId: string | undefined,
   setDisplayAddDriver: (isAddingDriver: boolean) => void
   setDisplayAddVehicle: (isAddingVehicle: boolean) => void,
   setDisplayEditDriver: (driver: CompletedProfileEditDriverFormFragment | undefined) => void
@@ -40,12 +42,13 @@ function DemoWrapper({ children }: { children: ({ externalId }: {
   const [billingCycle, setBillingCycle] = useState(BillingCycle.Monthly);
   const [editingDriver, setEditingDriver] = useState<CompletedProfileEditDriverFormFragment | undefined>(undefined);
   const [editingVehicle, setEditingVehicle] = useState<CompletedProfileEditVehicleFormFragment | undefined>(undefined);
+  const [selectedQuoteId, selectQuoteId] = useState<string | undefined>(undefined);
   const [updatingMailingAddress, setUpdatingMailingAddress] = useState(false);
   const [updatingProfile, setUpdatingProfile] = useState(false);
 
   const toggleAutomaticQuoting = useCallback(() => setAutomaticQuoting((enabled) => !enabled), [setAutomaticQuoting]);
 
-  const handleChange = useCallback((event) => setValue(event.target.value), [setValue])
+  const handleChange = useCallback((event) => setValue(event.target.value), [setValue]);
 
 
   return (
@@ -72,6 +75,8 @@ function DemoWrapper({ children }: { children: ({ externalId }: {
             setDisplayEditVehicle: setEditingVehicle,
             displayUpdateProfile: updatingProfile,
             displayUpdateMailingAddress: updatingMailingAddress,
+            selectQuoteId,
+            selectedQuoteId,
             setDisplayUpdateMailingAddress: setUpdatingMailingAddress,
             setDisplayUpdateProfile: setUpdatingProfile,
           }
@@ -85,9 +90,10 @@ render(
   <StrictMode>
     <EmbeddedClientProvider client={client}>
       <DemoWrapper>
-        {({ automaticQuoting, billingCycle, externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateMailingAddress, displayUpdateProfile, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateMailingAddress, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
+        {({ automaticQuoting, billingCycle, externalId, displayAddDriver, displayAddVehicle, displayEditDriver, displayEditVehicle, displayUpdateMailingAddress, displayUpdateProfile, selectQuoteId, selectedQuoteId, setDisplayEditDriver, setDisplayEditVehicle, setDisplayUpdateMailingAddress, setDisplayUpdateProfile, setDisplayAddDriver, setDisplayAddVehicle }) => (
             <EmbeddedApp externalId={externalId} billingCycle={billingCycle}>
               {({ data, loading, error, removeDriver, removeVehicle }) => {
+                const theme = useMantineTheme();
                 if (error) {
                   return (
                     <h2>{error.message}</h2>
@@ -155,10 +161,31 @@ render(
                         {
                           data.account.profile.__typename === "RatedProfile" &&
                           <div>
-                            <h1>THIS PROFILE HAS BEEN RATED</h1>
-                            <code>
-                              {JSON.stringify(data.account.profile.rate.quotes)}
-                            </code>
+                              {
+                                data.account.profile.rate.quotes.map((quote) => (
+                                  <Card key={quote.id} shadow="sm" style={{ marginBottom: 20, borderColor: quote.id === selectedQuoteId ? theme.primaryColor : undefined, cursor: 'pointer' }} withBorder onClick={() => selectQuoteId(quote.id)}>
+                                    <Group position="apart" style={{ marginBottom: 5 }}>
+                                      <Text weight={500}>{quote.tier.toUpperCase()}</Text>
+                                      <Group>
+                                        <Text>${quote.billingAmount?.dollars}.{quote.billingAmount?.cents}</Text>
+                                        <Text>/{billingCycle === BillingCycle.Monthly ? 'mo' : 'term'}</Text>
+                                      </Group>
+                                    </Group>
+
+                                    {
+                                        quote.tier === QuoteTier.Recommended && 
+                                        <Badge color="pink" variant="light">
+                                          Recommended
+                                        </Badge>
+                                      }
+
+                                    <Text size="sm" style={{ lineHeight: 1.5 }}>
+                                      With Fjord Tours you can explore more of the magical fjord landscapes with tours and
+                                      activities on and around the fjords of Norway
+                                    </Text>
+                                  </Card>
+                                ))
+                              }
                           </div>
                         }
 
