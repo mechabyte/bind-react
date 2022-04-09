@@ -25,6 +25,28 @@ export type AdditionalVehicleInput = {
   vin: Scalars['String'];
 };
 
+export type AffirmationStatement = {
+  __typename?: 'AffirmationStatement';
+  /** Fetches an object given its ID. */
+  node?: Maybe<Node>;
+  /** Fetches a list of objects given a list of IDs. */
+  nodes: Array<Maybe<Node>>;
+  /** Required statement to display */
+  statement: Scalars['String'];
+  /** Title of the required statement to display */
+  title: Scalars['String'];
+};
+
+
+export type AffirmationStatementNodeArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type AffirmationStatementNodesArgs = {
+  ids: Array<Scalars['ID']>;
+};
+
 export type BillingAmount = {
   __typename?: 'BillingAmount';
   cents: Scalars['Int'];
@@ -284,6 +306,12 @@ export type DateFormInputNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
+/** An object with an ID. */
+export type Disclaimer = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
 export type Driver = Node & {
   __typename?: 'Driver';
   firstName: Scalars['String'];
@@ -425,6 +453,48 @@ export enum Gender {
   M = 'M',
   X = 'X'
 }
+
+export type GeneratedDisclaimer = Disclaimer & Node & {
+  __typename?: 'GeneratedDisclaimer';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  /** Fetches an object given its ID. */
+  node?: Maybe<Node>;
+  /** Fetches a list of objects given a list of IDs. */
+  nodes: Array<Maybe<Node>>;
+  /** URL to view the disclaimer file */
+  url: Scalars['String'];
+};
+
+
+export type GeneratedDisclaimerNodeArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type GeneratedDisclaimerNodesArgs = {
+  ids: Array<Scalars['ID']>;
+};
+
+export type GeneratingDisclaimer = Disclaimer & Node & {
+  __typename?: 'GeneratingDisclaimer';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  /** Fetches an object given its ID. */
+  node?: Maybe<Node>;
+  /** Fetches a list of objects given a list of IDs. */
+  nodes: Array<Maybe<Node>>;
+};
+
+
+export type GeneratingDisclaimerNodeArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type GeneratingDisclaimerNodesArgs = {
+  ids: Array<Scalars['ID']>;
+};
 
 export enum HomeownerStatus {
   Other = 'other',
@@ -881,9 +951,10 @@ export type QuoteNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
-export type QuoteCheckout = Node & {
+export type QuoteCheckout = {
   __typename?: 'QuoteCheckout';
-  id: Scalars['ID'];
+  affirmationStatement: AffirmationStatement;
+  disclaimers: Array<Disclaimer>;
   /** Fetches an object given its ID. */
   node?: Maybe<Node>;
   /** Fetches a list of objects given a list of IDs. */
@@ -1320,3 +1391,12 @@ export type GetCompletedProfileUpdateQueryVariables = Exact<{
 
 
 export type GetCompletedProfileUpdateQuery = { __typename?: 'Query', account?: { __typename?: 'ConsentedAccount', id: string, profile: { __typename?: 'CompletedProfile', id: string, completed: boolean, form?: { __typename?: 'Form', title?: string | null, inputs: Array<{ __typename: 'CheckboxFormInput', checked: boolean, disabled?: boolean | null, label?: string | null, required?: boolean | null, name: string } | { __typename: 'DateFormInput', disabled?: boolean | null, label?: string | null, maxDate?: any | null, minDate?: any | null, placeholder?: string | null, required?: boolean | null, selectedDate?: any | null, name: string } | { __typename: 'NumberFormInput', description?: string | null, disabled?: boolean | null, label?: string | null, maxValue?: number | null, minValue?: number | null, placeholder?: string | null, required?: boolean | null, name: string, numericValue?: number | null } | { __typename: 'SelectFormInput', disabled?: boolean | null, label?: string | null, required?: boolean | null, selectedOption?: string | null, name: string, options: Array<{ __typename?: 'InputOption', label: string, value: string }> } | { __typename: 'TextFormInput', description?: string | null, disabled?: boolean | null, label?: string | null, placeholder?: string | null, required?: boolean | null, value?: string | null, name: string }> } | null } | { __typename?: 'IncompleteProfile', id: string, completed: boolean } | { __typename?: 'InsuredProfile', id: string, completed: boolean } | { __typename?: 'RatedProfile', id: string, completed: boolean } } | { __typename?: 'PolicyholderAccount', id: string } | { __typename?: 'UnconsentedAccount', id: string } | null };
+
+export type QuoteCheckoutQueryVariables = Exact<{
+  externalId: Scalars['ID'];
+  billingCycle: BillingCycle;
+  selectedQuoteId: Scalars['ID'];
+}>;
+
+
+export type QuoteCheckoutQuery = { __typename?: 'Query', account?: { __typename: 'ConsentedAccount', id: string, profile: { __typename?: 'CompletedProfile' } | { __typename?: 'IncompleteProfile' } | { __typename?: 'InsuredProfile' } | { __typename?: 'RatedProfile', quoteCheckout?: { __typename?: 'QuoteCheckout', affirmationStatement: { __typename?: 'AffirmationStatement', statement: string, title: string }, disclaimers: Array<{ __typename: 'GeneratedDisclaimer', url: string, id: string, name: string } | { __typename: 'GeneratingDisclaimer', id: string, name: string }> } | null } } | { __typename: 'PolicyholderAccount', id: string } | { __typename: 'UnconsentedAccount', id: string } | null };

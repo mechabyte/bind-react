@@ -9,6 +9,26 @@ input AdditionalVehicleInput {
   vin: String!
 }
 
+type AffirmationStatement {
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+
+  """Required statement to display"""
+  statement: String!
+
+  """Title of the required statement to display"""
+  title: String!
+}
+
 type BillingAmount {
   cents: Int!
   dollars: Int!
@@ -254,6 +274,12 @@ type DateFormInput implements FormInput {
   selectedDate: ISO8601Date
 }
 
+"""An object with an ID."""
+interface Disclaimer implements Node {
+  id: ID!
+  name: String!
+}
+
 type Driver implements Node {
   firstName: String!
   form(operation: DriverFormOperation!): Form
@@ -392,6 +418,43 @@ enum Gender {
   F
   M
   X
+}
+
+type GeneratedDisclaimer implements Disclaimer & Node {
+  id: ID!
+  name: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+
+  """URL to view the disclaimer file"""
+  url: String!
+}
+
+type GeneratingDisclaimer implements Disclaimer & Node {
+  id: ID!
+  name: String!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
 }
 
 enum HomeownerStatus {
@@ -857,8 +920,9 @@ type Quote implements Node {
   tier: QuoteTier!
 }
 
-type QuoteCheckout implements Node {
-  id: ID!
+type QuoteCheckout {
+  affirmationStatement: AffirmationStatement!
+  disclaimers: [Disclaimer!]!
 
   """Fetches an object given its ID."""
   node(

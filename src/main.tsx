@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import { StrictMode, useCallback, useState } from "react";
 import { render } from "react-dom";
-import { Card, Badge, TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text, Checkbox, Select, useMantineTheme } from "@mantine/core"
+import { Card, Badge, TextInput as BaseTextInput, Button, Modal, Group, CloseButton, Text, Checkbox, Select, useMantineTheme, Title } from "@mantine/core"
 import createClient from '@embedded-bind/client';
-import { EmbeddedApp, EmbeddedClientProvider, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, CompletedProfileUpdateMailingAddressForm, FormFields } from '@embedded-bind/react';
+import { EmbeddedApp, EmbeddedClientProvider, QuoteCheckout, IncompleteProfileForm, CompletedProfileUpdateForm, CompletedProfileEditDriverForm, CompletedProfileEditVehicleForm, CompletedProfileAddDriverForm, CompletedProfileAddVehicleForm, CompletedProfileUpdateMailingAddressForm, FormFields } from '@embedded-bind/react';
 import { InMemoryCache } from "@apollo/client";
 import { QuoteTier, BillingCycle, AdditionalVehicleInput, DriverInput, ProfileInput, FormInputTypesFragment, VehicleInput, CompletedProfileEditDriverFormFragment, CompletedProfileEditVehicleFormFragment, MailingAddressInput } from "./react/graphql/generated";
 
@@ -290,6 +290,45 @@ render(
                           )
                         }}
                         </CompletedProfileAddVehicleForm>
+                        {
+                          selectedQuoteId &&
+                          <QuoteCheckout externalId={externalId} selectedQuoteId={selectedQuoteId} billingCycle={billingCycle}>
+                            {({ data: checkoutData, loading: loadingCheckout, error: checkoutError }) => {
+                              if (checkoutError) {
+                                return (
+                                  <h2>{checkoutError.message}</h2>
+                                )
+                              }
+                              if (loadingCheckout) {
+                                return (
+                                  <h2>Loading...</h2>
+                                )
+                              }
+                              if (checkoutData?.account?.__typename === "ConsentedAccount" && checkoutData.account.profile.__typename === "RatedProfile") {
+                                return (
+                                <>
+                                  <Title order={2}>Documents to review</Title>
+                                  {
+                                    checkoutData.account.profile.quoteCheckout?.disclaimers.map((disclaimer) => (
+                                      <Button loading={disclaimer.__typename === "GeneratingDisclaimer"} onClick={() => {
+                                        if (disclaimer.__typename === "GeneratedDisclaimer") {
+                                          window.open(disclaimer.url, '_blank')
+                                        }
+                                      }}>
+                                        {disclaimer.name}
+                                      </Button>
+                                      ))
+                                  }
+                                  <Title order={4}>{checkoutData.account.profile.quoteCheckout?.affirmationStatement.title}</Title>
+                                  <Text>{checkoutData.account.profile.quoteCheckout?.affirmationStatement.statement}</Text>
+                                </>
+                                );
+                              } 
+                                return (<>Unable to checkout</>)
+                              
+                            }}
+                          </QuoteCheckout>
+                        }
                       </>
                     )
                   }
