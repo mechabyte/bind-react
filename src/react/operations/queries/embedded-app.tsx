@@ -77,9 +77,11 @@ query EmbeddedApp($externalId:ID!, $billingCycle:BillingCycle!) {
     }
     ... on PolicyholderAccount {
       policy {
+        __typename
         effectiveDate
         expirationDate
         id
+        number
         partnerBroadcasted
       }
     }

@@ -3,6 +3,26 @@ interface Account implements Node {
   id: ID!
 }
 
+type ActivePolicy implements Node & Policy {
+  effectiveDate: ISO8601Date!
+  expirationDate: ISO8601Date!
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  number: String!
+  partnerBroadcasted: Boolean!
+}
+
 """Attributes for creating or updating a profile vehicle"""
 input AdditionalVehicleInput {
   """Vehicle VIN"""
@@ -376,6 +396,26 @@ type EstimatedRate implements Node & Rate {
   quotes: [Quote!]!
 }
 
+type ExpiredPolicy implements Node & Policy {
+  effectiveDate: ISO8601Date!
+  expirationDate: ISO8601Date!
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  number: String!
+  partnerBroadcasted: Boolean!
+}
+
 type Form {
   """Required fields to complete the operation"""
   inputs: [FormInput!]!
@@ -412,6 +452,26 @@ interface FormInput {
 
 enum FormMailingAddressOperation {
   UPDATE_MAILING_ADDRESS
+}
+
+type FuturePolicy implements Node & Policy {
+  effectiveDate: ISO8601Date!
+  expirationDate: ISO8601Date!
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  number: String!
+  partnerBroadcasted: Boolean!
 }
 
 enum Gender {
@@ -828,22 +888,12 @@ type PerformProfileOperationsPayload {
   success: Boolean!
 }
 
-type Policy implements Node {
+"""An object with an ID."""
+interface Policy implements Node {
   effectiveDate: ISO8601Date!
   expirationDate: ISO8601Date!
   id: ID!
-
-  """Fetches an object given its ID."""
-  node(
-    """ID of the object."""
-    id: ID!
-  ): Node
-
-  """Fetches a list of objects given a list of IDs."""
-  nodes(
-    """IDs of the objects."""
-    ids: [ID!]!
-  ): [Node]!
+  number: String!
   partnerBroadcasted: Boolean!
 }
 
