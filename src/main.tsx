@@ -361,7 +361,10 @@ render(
                 }
                 if (data?.account?.__typename === "PolicyholderAccount") {
                   return (
-                    <Title order={2}>Purchased!</Title>
+                    <>
+                      <Title order={2}>Purchased!</Title>
+                      <code>{JSON.stringify(data.account.policy)}</code>
+                    </>
                   )
                 }           
                 console.log(data);

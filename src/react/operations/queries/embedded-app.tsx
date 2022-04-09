@@ -75,6 +75,14 @@ query EmbeddedApp($externalId:ID!, $billingCycle:BillingCycle!) {
         }
       }
     }
+    ... on PolicyholderAccount {
+      policy {
+        effectiveDate
+        expirationDate
+        id
+        partnerBroadcasted
+      }
+    }
   }
 }
 ${COMPLETED_PROFILE_ADD_DRIVER_FRAGMENT}

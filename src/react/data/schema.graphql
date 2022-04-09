@@ -828,6 +828,25 @@ type PerformProfileOperationsPayload {
   success: Boolean!
 }
 
+type Policy implements Node {
+  effectiveDate: ISO8601Date!
+  expirationDate: ISO8601Date!
+  id: ID!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  partnerBroadcasted: Boolean!
+}
+
 type PolicyholderAccount implements Account & Node {
   id: ID!
 
@@ -842,6 +861,7 @@ type PolicyholderAccount implements Account & Node {
     """IDs of the objects."""
     ids: [ID!]!
   ): [Node]!
+  policy: Policy!
   profile: InsuredProfile!
 }
 
