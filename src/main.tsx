@@ -181,7 +181,7 @@ render(
                                     <Group position="apart" style={{ marginBottom: 5 }}>
                                       <Text weight={500}>{quote.tier.toUpperCase()}</Text>
                                       <Group>
-                                        <Text>${quote.billingAmount?.dollars}.{quote.billingAmount?.cents}</Text>
+                                        <Text>${quote.billingAmount?.dollars}.{`${quote.billingAmount?.cents}`.padEnd(2, '0')}</Text>
                                         <Text>/{billingCycle === BillingCycle.Monthly ? 'mo' : 'term'}</Text>
                                       </Group>
                                     </Group>

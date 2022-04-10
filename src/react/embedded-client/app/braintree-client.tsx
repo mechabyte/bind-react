@@ -12,6 +12,7 @@ export interface BraintreeClientProps {
 export default function BraintreeClient ({ buttonText, children, clientPaymentAuthorizationToken, onPaymentCompleted }: BraintreeClientProps) {
 
   const [initialized, setInitialized] = useState(false);
+  const [requestingPayment, setRequestingPayment] = useState(false);
   const [braintreeInstance, setBraintreeInstance] = useState<Dropin | undefined>(undefined);
 
   useEffect(() => {
@@ -48,10 +49,13 @@ export default function BraintreeClient ({ buttonText, children, clientPaymentAu
           <Button
               className="braintreePayButton"
               disabled={!braintreeInstance}
+              loading={requestingPayment}
               onClick={() => {
                   if (braintreeInstance) {
+                      setRequestingPayment(true);
                       braintreeInstance.requestPaymentMethod(
                           (error, payload) => {
+                              setRequestingPayment(false);
                               if (error) {
                                   console.error(error);
                               } else {
