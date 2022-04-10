@@ -1040,6 +1040,7 @@ type Query {
 
 type Quote implements Node {
   billingAmount(billingCycle: BillingCycle!): BillingAmount
+  coverages: [QuoteCoverage!]!
   id: ID!
 
   """Fetches an object given its ID."""
@@ -1073,6 +1074,83 @@ type QuoteCheckout {
     ids: [ID!]!
   ): [Node]!
   policyStartDateInput: DateFormInput!
+}
+
+type QuoteCoverage {
+  coveredVins: [String!]!
+  declined: Boolean!
+
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Fetches a list of objects given a list of IDs."""
+  nodes(
+    """IDs of the objects."""
+    ids: [ID!]!
+  ): [Node]!
+  symbol: QuoteCoverageSymbol!
+}
+
+enum QuoteCoverageSymbol {
+  """Bodily Injury"""
+  bi
+
+  """Bodily Injury/Property Damage Combined"""
+  bi_pd_combined
+
+  """Collision Deductible Waiver"""
+  cdw
+
+  """Collision"""
+  coll
+
+  """Comprehensive"""
+  comp
+
+  """Customized Equipment Coverage"""
+  custe
+
+  """Funeral Benefits"""
+  fnrl
+
+  """Medical and Rehabilitation Expenses"""
+  med_exp
+
+  """Medical Payments"""
+  med_pay
+
+  """Property Damage"""
+  pd
+
+  """Personal Injury Protection"""
+  pip
+
+  """Rental"""
+  rental
+
+  """Roadside Assistance"""
+  roadside
+
+  """Underinsured Motorist Bodily Injury"""
+  uim
+
+  """Underinsured Motorist Property Damage"""
+  uimpd
+
+  """Uninsured Motorist Bodily Injury"""
+  um
+
+  """Uninsured Motorist Property Damage"""
+  umpd
+
+  """Uninsured and Underinsured Motorist Bodily Injury"""
+  umuim
+
+  """Work Loss"""
+  wk_ls
 }
 
 enum QuoteTier {

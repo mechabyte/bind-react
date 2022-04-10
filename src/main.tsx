@@ -49,7 +49,10 @@ function DemoWrapper({ children }: { children: ({ externalId }: {
 
   const toggleAutomaticQuoting = useCallback(() => setAutomaticQuoting((enabled) => !enabled), [setAutomaticQuoting]);
 
-  const handleChange = useCallback((event) => setValue(event.target.value), [setValue]);
+  const handleChange = useCallback((event) => {
+    selectQuoteId(undefined);
+    setValue(event.target.value);
+  }, [setValue]);
 
 
   return (
@@ -191,8 +194,9 @@ render(
                                       }
 
                                     <Text size="sm" style={{ lineHeight: 1.5 }}>
-                                      With Fjord Tours you can explore more of the magical fjord landscapes with tours and
-                                      activities on and around the fjords of Norway
+                                      {quote.coverages.map((coverage) => (
+                                        <Text size="xs">{coverage.symbol}</Text>
+                                      ))}
                                     </Text>
                                   </Card>
                                 ))

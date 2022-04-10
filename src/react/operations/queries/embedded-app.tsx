@@ -60,6 +60,10 @@ query EmbeddedApp($externalId:ID!, $billingCycle:BillingCycle!) {
                   cents
                   dollars
                 }
+                coverages {
+                  declined
+                  symbol
+                }
                 tier
               }
             }
@@ -69,6 +73,10 @@ query EmbeddedApp($externalId:ID!, $billingCycle:BillingCycle!) {
                 billingAmount(billingCycle:$billingCycle) {
                   cents
                   dollars
+                }
+                coverages {
+                  declined
+                  symbol
                 }
                 tier
               }
