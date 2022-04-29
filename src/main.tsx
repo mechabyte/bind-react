@@ -110,10 +110,21 @@ render(
                   )
                 }
                 if (data?.account?.__typename === "PolicyholderAccount") {
+                  const pniDriver = data.account?.policy?.primaryNamedInsured;
                   return (
                     <>
                       <Title order={2}>Purchased!</Title>
                       <code>{JSON.stringify(data.account.policy)}</code>
+                      <Text size="sm">{`Primary named insured: ${pniDriver.firstName} ${pniDriver.lastName}`}</Text>
+                      <Text>{`Effective: ${data.account?.policy?.effectiveDate}-${data.account?.policy?.expirationDate}`}</Text>
+                      <Text>Additional drivers:</Text>
+                      <ul>
+                        {data.account.policy.namedInsureds.filter((ni) => ni.id !== pniDriver.id).map((additionalNamedInsured) => 
+                          <li key={additionalNamedInsured.id}>
+                            <Text>{`${additionalNamedInsured.firstName} ${additionalNamedInsured.lastName}`}</Text>
+                          </li>
+                        )}
+                      </ul>
                     </>
                   )
                 }
